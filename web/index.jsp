@@ -24,16 +24,6 @@
 
         nav h1 { color: white; font-size: 24px; }
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            background-color: #0055a5;
-            padding: 8px 16px;
-            border-radius: 5px;
-        }
-
-        nav a:hover { background-color: #0077cc; }
-
         .hero {
             background-color: #003366;
             color: white;
@@ -44,34 +34,13 @@
         .hero h2 { font-size: 32px; margin-bottom: 10px; }
         .hero p { font-size: 16px; color: #cce0ff; }
 
-        .filters {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filters button {
-            padding: 8px 18px;
-            border: 2px solid #003366;
-            background: white;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .filters button:hover, .filters button.active {
-            background-color: #003366;
-            color: white;
-        }
-
         .services {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             gap: 20px;
-            padding: 20px 40px;
             justify-content: center;
+            padding: 40px 40px 20px;
+            overflow-x: auto;
         }
 
         .card {
@@ -101,8 +70,12 @@
         .high { background-color: #dc3545; }
 
         .card .status { font-size: 13px; margin-bottom: 5px; }
-        .card .wait { font-size: 20px; font-weight: bold; color: #003366; }
-        .card .wait span { font-size: 13px; font-weight: normal; color: #777;
+
+        .card .wait-locked {
+            font-size: 14px;
+            color: #aaa;
+            font-style: italic;
+            margin-top: 5px;
         }
 
         .badge {
@@ -118,6 +91,74 @@
         .badge.medium { background-color: #ffc107; color: #333; }
         .badge.high { background-color: #dc3545; }
 
+        /* Login box */
+        .login-box {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            width: 320px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 0 auto 40px;
+        }
+
+        .login-box h3 {
+            color: #003366;
+            margin-bottom: 16px;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .login-box p {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .login-box form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .login-box input {
+            padding: 9px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: #003366;
+        }
+
+        .btn-login {
+            padding: 9px;
+            background-color: #003366;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-login:hover { background-color: #0055a5; }
+
+        .btn-signup {
+            display: block;
+            text-align: center;
+            padding: 9px;
+            background-color: white;
+            color: #003366;
+            border: 2px solid #003366;
+            border-radius: 5px;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .btn-signup:hover { background-color: #f0f4ff; }
+
         footer {
             text-align: center;
             padding: 20px;
@@ -132,7 +173,6 @@
 <!-- Navbar -->
 <nav>
     <h1>CampusQueue</h1>
-    <a href="login.jsp">Login</a>
 </nav>
 
 <!-- Hero -->
@@ -141,55 +181,91 @@
     <p>Real-time wait times and crowd levels for campus services</p>
 </div>
 
-<!-- Filters -->
-<div class="filters">
-    <button class="active">All</button>
-    <button>Dining</button>
-    <button>Gym</button>
-    <button>Parking</button>
-    <button>Advising</button>
-</div>
-
 <!-- Service Cards -->
 <div class="services">
 
-    <div class="card">
-        <h3>Student Union Cafeteria</h3>
-        <div class="category">Dining</div>
-        <div class="crowd-bar high"></div>
-        <span class="badge high">High</span>
-        <div class="status">Status: <strong>Open</strong></div>
-        <div class="wait">25 min <span>estimated wait</span></div>
+        <div class="card">
+            <h3>Student Union Cafeteria</h3>
+            <div class="category">Dining</div>
+            <div class="crowd-bar high"></div>
+            <span class="badge high">High</span>
+            <div class="status">Status: <strong>Open</strong></div>
+            <div class="wait-locked">Login to view wait time</div>
+        </div>
+
+        <div class="card">
+            <h3>SRAC Gym</h3>
+            <div class="category">Gym</div>
+            <div class="crowd-bar medium"></div>
+            <span class="badge medium">Medium</span>
+            <div class="status">Status: <strong>Open</strong></div>
+            <div class="wait-locked">Login to view wait time</div>
+        </div>
+
+        <div class="card">
+            <h3>Advising Center</h3>
+            <div class="category">Advising</div>
+            <div class="crowd-bar low"></div>
+            <span class="badge low">Low</span>
+            <div class="status">Status: <strong>Open</strong></div>
+            <div class="wait-locked">Login to view wait time</div>
+        </div>
+
+        <div class="card">
+            <h3>Parking Garage</h3>
+            <div class="category">Parking</div>
+            <div class="crowd-bar medium"></div>
+            <span class="badge medium">Medium</span>
+            <div class="status">Status: <strong>Open</strong></div>
+            <div class="wait-locked">Login to view wait time</div>
+        </div>
+
     </div>
 
-    <div class="card">
-        <h3>SRAC Gym</h3>
-        <div class="category">Gym</div>
-        <div class="crowd-bar medium"></div>
-        <span class="badge medium">Medium</span>
-        <div class="status">Status: <strong>Open</strong></div>
-        <div class="wait">10 min <span>estimated wait</span></div>
+<!-- Login/Signup Box -->
+<div class="login-box">
+
+    <!-- Login Form -->
+    <div id="loginForm">
+        <h3>Login</h3>
+        <p>Log in to see real-time wait times.</p>
+        <form action="LoginServlet" method="post">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit" class="btn-login">Login</button>
+        </form>
+        <p style="margin-top: 14px;">Don't have an account? <a href="#" onclick="toggleForm()" style="color: #003366;">Sign Up</a></p>
     </div>
 
-    <div class="card">
-        <h3>Advising Center</h3>
-        <div class="category">Advising</div>
-        <div class="crowd-bar low"></div>
-        <span class="badge low">Low</span>
-        <div class="status">Status: <strong>Open</strong></div>
-        <div class="wait">5 min <span>estimated wait</span></div>
-    </div>
-
-    <div class="card">
-        <h3>Parking Garage</h3>
-        <div class="category">Parking</div>
-        <div class="crowd-bar medium"></div>
-        <span class="badge medium">Medium</span>
-        <div class="status">Status: <strong>Open</strong></div>
-        <div class="wait">12 min <span>estimated wait</span></div>
+    <!-- Sign Up Form -->
+    <div id="signupForm" style="display: none;">
+        <h3>Sign Up</h3>
+        <p>Create an account to get started.</p>
+        <form action="RegisterServlet" method="post">
+            <input type="text" name="name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+            <button type="submit" class="btn-login">Sign Up</button>
+        </form>
+        <p style="margin-top: 14px;">Already have an account? <a href="#" onclick="toggleForm()" style="color: #003366;">Login</a></p>
     </div>
 
 </div>
+
+<script>
+    function toggleForm() {
+        var login = document.getElementById('loginForm');
+        var signup = document.getElementById('signupForm');
+        if (login.style.display === 'none') {
+            login.style.display = 'block';
+            signup.style.display = 'none';
+        } else {
+            login.style.display = 'none';
+            signup.style.display = 'block';
+        }
+    }
+</script>
 
 <footer>
     CampusQueue &mdash; SJSU CS157A Section 2, Team 10

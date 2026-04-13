@@ -1,7 +1,9 @@
 .idea/
-  *.iml
-  out/
-  target/
-  *.class
-  *.war
-  *.jar
+*.iml
+out/
+target/
+*.class
+*.log
+*.war
+*.jar
+out/

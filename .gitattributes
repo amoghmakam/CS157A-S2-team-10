@@ -1,0 +1,4 @@
+*.java text eol=crlf
+*.jsp text eol=crlf
+*.xml text eol=crlf
+*.sql text eol=crlf

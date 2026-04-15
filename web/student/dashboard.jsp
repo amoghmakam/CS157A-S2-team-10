@@ -16,6 +16,16 @@
     if (hasActiveCheckIn == null) {
         hasActiveCheckIn = false;
     }
+
+    String activeServiceName = null;
+    if (history != null) {
+        for (CheckInRecord r : history) {
+            if (r.getCheckOutTime() == null) {
+                activeServiceName = r.getServiceName();
+                break;
+            }
+        }
+    }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -314,7 +324,14 @@
     <div class="summary-bar">
         <div class="summary-card">
             <h3>Account Status</h3>
-            <p><%= hasActiveCheckIn ? "You currently have an active check-in." : "You have no active check-in right now." %></p>
+            <% if (hasActiveCheckIn && activeServiceName != null) { %>
+                <p>Currently checked in at: <strong><%= activeServiceName %></strong></p>
+                <form action="<%= request.getContextPath() %>/CheckOutServlet" method="post" style="margin-top: 12px;">
+                    <button type="submit">Check Out of Active Service</button>
+                </form>
+            <% } else { %>
+                <p>You have no active check-in right now.</p>
+            <% } %>
         </div>
         <div class="summary-card">
             <h3>Quick Tip</h3>
@@ -363,13 +380,6 @@
             <p class="empty-note">No services are available right now.</p>
         <% } %>
 
-        <div class="checkout-box">
-            <form action="<%= request.getContextPath() %>/CheckOutServlet" method="post">
-                <button type="submit" <%= !hasActiveCheckIn ? "disabled" : "" %>>
-                    Check Out of Active Service
-                </button>
-            </form>
-        </div>
     </div>
 
     <div class="panel">

@@ -10,7 +10,7 @@ public class DBUtil {
     private static final String USER =
             System.getenv().getOrDefault("DB_USER", "root");
     private static final String PASSWORD =
-            System.getenv().getOrDefault("DB_PASSWORD", "");
+            System.getenv().getOrDefault("DB_PASSWORD", "campusqueue123");
 
     static {
         try {

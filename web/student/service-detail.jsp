@@ -227,6 +227,11 @@
             </div>
         </div>
     </div>
+    <% } else { %>
+    <div class="panel">
+        <h3>Service Details</h3>
+        <p class="empty-note">No service was found. Make sure the page was opened with a valid serviceName parameter.</p>
+    </div>
     <% } %>
 
     <div class="panel">

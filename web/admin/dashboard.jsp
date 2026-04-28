@@ -1,8 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="model.Service" %>
+<%@ page import="model.Service" %>
+<%@ page import="model.AuditLog" %>
 <%
     List<Service> services = (List<Service>) request.getAttribute("services");
+    List<AuditLog> auditLogs = (List<AuditLog>) request.getAttribute("auditLogs");
 
     String flashMessage = (String) session.getAttribute("flashMessage");
     String flashError = (String) session.getAttribute("flashError");
@@ -270,6 +273,37 @@
                 <button type="submit">Assign Staff</button>
             </div>
         </form>
+    </div>
+
+
+    <div class="panel">
+        <h3>Audit Log</h3>
+        <% if (auditLogs != null && !auditLogs.isEmpty()) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Audit ID</th>
+                    <th>User ID</th>
+                    <th>Action Type</th>
+                    <th>Description</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (AuditLog log : auditLogs) { %>
+                <tr>
+                    <td><%= log.getAuditID()%></td>
+                    <td><%= log.getUserID()%></td>
+                    <td><%= log.getActionType()%></td>
+                    <td><%= log.getActionDescription()%></td>
+                    <td><%= log.getActionTime()%></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+        <% } else { %>
+            <p class="empty-note">No audit log entries found.</p>
+        <% } %>
     </div>
 
 </div>

@@ -342,6 +342,30 @@
     <div class="panel">
         <h3>Available Services</h3>
 
+        <%
+            String selectedCategory = (String) request.getAttribute("selectedCategory");
+            if(selectedCategory == null) {
+                selectedCategory = "";
+            }
+        %>
+        <form method="get" action="<%= request.getContextPath()%>/StudentDashboardServlet"
+              style="margin-bottom: 18px; display: flex; gap:10px; flex-wrap: wrap;">
+            <select name="category"
+                    style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px;">
+                <option value="">All Categories</option>
+                <option value="Dining"  <%= "Dining".equals(selectedCategory)   ? "selected" : "" %>>Dining</option>
+                <option value="Fitness"  <%= "Fitness".equals(selectedCategory)   ? "selected" : "" %>>Fitness</option>
+                <option value="Advising"  <%= "Advising".equals(selectedCategory)   ? "selected" : "" %>>Advising</option>
+                <option value="Parking"  <%= "Parking".equals(selectedCategory)   ? "selected" : "" %>>Parking</option>
+            </select>
+            <button type="submit">Filter</button>
+            <% if (!selectedCategory.isEmpty()){ %>
+                <a href="<%= request.getContextPath() %>/StudentDashboardServlet"
+                   style="padding: 8px 12px; font-size: 14px; color: #003366;">Clear</a>
+            <% } %>
+        </form>
+
+
         <% if (services != null && !services.isEmpty()) { %>
             <div class="services">
                 <% for (Service s : services) {

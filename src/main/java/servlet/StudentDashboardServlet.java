@@ -28,7 +28,14 @@ public class StudentDashboardServlet extends HttpServlet {
         int studentId = (Integer) userIdObj;
 
         try {
-            request.setAttribute("services", serviceDao.getAllServices(null));
+            //For category filter
+            //reads category from the URL when student clicks "filter"
+            String category = request.getParameter("category");
+            //Passes the category to DAO
+            request.setAttribute("services", serviceDao.getAllServices(category));
+            //Sends category back to JSP , prevents sending null
+            request.setAttribute("selectedCategory", category != null ? category : "");
+
             request.setAttribute("history", checkInDao.getStudentHistory(studentId));
             request.setAttribute("hasActiveCheckIn", checkInDao.hasActiveCheckIn(studentId));
             request.getRequestDispatcher("/student/dashboard.jsp").forward(request, response);

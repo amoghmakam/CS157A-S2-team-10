@@ -297,14 +297,21 @@
     <div class="flash error"><%= flashError %></div>
 <% } %>
 
+<%
+    String selectedCategory = request.getParameter("category");
+    if(selectedCategory == null){
+        selectedCategory = "";
+    }
+%>
+
 <div class="filters">
     <form action="<%= request.getContextPath() %>/HomeServlet" method="get">
         <select name="category">
-            <option value="">All Categories</option>
-            <option value="Dining">Dining</option>
-            <option value="Fitness">Fitness</option>
-            <option value="Advising">Advising</option>
-            <option value="Parking">Parking</option>
+            <option value=""> All Categories</option>
+            <option value="Dining" <%= "Dining".equals(selectedCategory) ? "selected" : "" %> >Dining</option>
+            <option value="Fitness" <%= "Fitness".equals(selectedCategory) ? "selected" : "" %> >Fitness</option>
+            <option value="Advising" <%= "Advising".equals(selectedCategory) ? "selected" : "" %> >Advising</option>
+            <option value="Parking" <%= "Parking".equals(selectedCategory) ? "selected" : "" %> >Parking</option>
         </select>
         <button type="submit">Filter</button>
     </form>

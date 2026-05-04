@@ -29,15 +29,16 @@ export DB_URL="jdbc:mysql://localhost:3306/team10?serverTimezone=UTC"
 ## 3. Reset and verify the database
 
 ```bash
-mysql -u root -p < sql/schema.sql
-mysql -u root -p team10 < sql/upgrade_basic_features.sql
-mysql -u root -p team10 < sql/test_basic_features.sql
+sh scripts/setup_db_mac.sh
 ```
 
-Or run:
+This runs:
 
 ```bash
-sh scripts/setup_db_mac.sh
+mysql -u root -p < sql/schema.sql
+mysql -u root -p team10 < sql/upgrade_basic_features.sql
+mysql -u root -p team10 < sql/demo_accounts.sql
+mysql -u root -p team10 < sql/test_basic_features.sql
 ```
 
 ## 4. Compile and deploy
@@ -54,7 +55,15 @@ The script compiles Java files, deploys the app as `CampusQueueFork`, clears old
 http://localhost:8080/CampusQueueFork/HomeServlet
 ```
 
-## 6. Demo accounts
+## 6. Recommended demo accounts
+
+Student: `student.demo@sjsu.edu` / `pass123`
+
+Staff: `staff.demo@sjsu.edu` / `pass123`
+
+Admin: `admin.demo@sjsu.edu` / `pass123`
+
+## 7. Backup sample accounts
 
 Student: `john.doe@sjsu.edu` / `pass123`
 
@@ -62,7 +71,7 @@ Staff: `suparn.posina@sjsu.edu` / `pass123`
 
 Admin: `stephen.curry@sjsu.edu` / `pass123`
 
-## 7. Demo checklist
+## 8. Demo checklist
 
 ### Student
 

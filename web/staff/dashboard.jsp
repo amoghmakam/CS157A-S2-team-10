@@ -4,6 +4,7 @@
 <%@ page import="model.CheckInRecord" %>
 <%@ page import="model.ValidationEntry" %>
 <%
+    // These lists are created in StaffDashboardServlet.
     List<Service> services = (List<Service>) request.getAttribute("services");
     List<CheckInRecord> records = (List<CheckInRecord>) request.getAttribute("records");
     List<ValidationEntry> validations = (List<ValidationEntry>) request.getAttribute("validations");
@@ -23,226 +24,42 @@
     <title>Staff Dashboard - CampusQueue</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        nav {
-            background-color: #003366;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        nav h1 {
-            color: white;
-            font-size: 24px;
-        }
-
-        nav .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            color: white;
-        }
-
-        nav .nav-right a {
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        nav .nav-right a:hover {
-            text-decoration: underline;
-        }
-
-        .hero {
-            background-color: #003366;
-            color: white;
-            text-align: center;
-            padding: 40px 20px;
-        }
-
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; }
+        nav { background-color: #003366; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        nav h1 { color: white; font-size: 24px; }
+        nav .nav-right { display: flex; align-items: center; gap: 14px; color: white; }
+        nav .nav-right a { color: white; text-decoration: none; font-size: 14px; }
+        .hero { background-color: #003366; color: white; text-align: center; padding: 40px 20px; }
         .hero h2 { font-size: 30px; margin-bottom: 10px; }
         .hero p { font-size: 15px; color: #cce0ff; }
-
-        .flash {
-            width: min(1100px, 94%);
-            margin: 20px auto 0;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .flash.success {
-            background: #e8f7ee;
-            color: #1d6b39;
-            border: 1px solid #b9e5c8;
-        }
-
-        .flash.error {
-            background: #fdecec;
-            color: #8a1f1f;
-            border: 1px solid #f1c4c4;
-        }
-
-        .page {
-            width: min(1100px, 94%);
-            margin: 24px auto 40px;
-        }
-
-        .panel {
-            background: white;
-            border-radius: 10px;
-            padding: 22px;
-            margin-bottom: 22px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .panel h3 {
-            color: #003366;
-            margin-bottom: 16px;
-            font-size: 22px;
-        }
-
-        .services {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 18px;
-        }
-
-        .card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 18px;
-            width: 300px;
-            border: 1px solid #e8e8e8;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-        }
-
-        .card h4 {
-            font-size: 18px;
-            margin-bottom: 6px;
-            color: #222;
-        }
-
-        .category {
-            font-size: 12px;
-            color: #777;
-            margin-bottom: 10px;
-        }
-
-        .status, .location, .wait {
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            color: white;
-            margin-bottom: 10px;
-        }
-
+        .flash { width: min(1100px, 94%); margin: 20px auto 0; padding: 12px 16px; border-radius: 8px; font-size: 14px; }
+        .flash.success { background: #e8f7ee; color: #1d6b39; border: 1px solid #b9e5c8; }
+        .flash.error { background: #fdecec; color: #8a1f1f; border: 1px solid #f1c4c4; }
+        .page { width: min(1100px, 94%); margin: 24px auto 40px; }
+        .panel { background: white; border-radius: 10px; padding: 22px; margin-bottom: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .panel h3 { color: #003366; margin-bottom: 16px; font-size: 22px; }
+        .services { display: flex; flex-wrap: wrap; gap: 18px; }
+        .card { background: #fff; border-radius: 10px; padding: 18px; width: 320px; border: 1px solid #e8e8e8; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+        .card h4 { font-size: 18px; margin-bottom: 6px; color: #222; }
+        .category { font-size: 12px; color: #777; margin-bottom: 10px; }
+        .status, .location, .wait { font-size: 14px; margin-bottom: 8px; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; color: white; margin-bottom: 10px; }
         .low { background-color: #28a745; }
         .medium { background-color: #ffc107; color: #333; }
         .high { background-color: #dc3545; }
-
-        .crowd-bar {
-            height: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        .card form {
-            margin-top: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        input, select, button {
-            padding: 10px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        input, select {
-            border: 1px solid #ccc;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: #003366;
-        }
-
-        button {
-            background-color: #003366;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0055a5;
-        }
-
-        .secondary-link {
-            display: inline-block;
-            margin-top: 10px;
-            color: #003366;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .secondary-link:hover {
-            text-decoration: underline;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            overflow: hidden;
-        }
-
-        thead {
-            background: #003366;
-            color: white;
-        }
-
-        th, td {
-            padding: 12px 10px;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        tbody tr:nth-child(even) {
-            background: #f8fbff;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid #e6eef7;
-        }
-
-        .empty-note {
-            color: #777;
-            font-size: 14px;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #777;
-            font-size: 13px;
-            margin-top: 30px;
-        }
+        .crowd-bar { height: 10px; border-radius: 5px; margin-bottom: 10px; }
+        .card form { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+        input, select, button { padding: 9px 10px; border-radius: 6px; font-size: 14px; }
+        input, select { border: 1px solid #ccc; }
+        button { background-color: #003366; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0055a5; }
+        .secondary-link { display: inline-block; margin-top: 10px; color: #003366; text-decoration: none; font-size: 14px; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; overflow: hidden; }
+        thead { background: #003366; color: white; }
+        th, td { padding: 12px 10px; text-align: left; font-size: 14px; border-bottom: 1px solid #e6eef7; vertical-align: top; }
+        tbody tr:nth-child(even) { background: #f8fbff; }
+        .empty-note { color: #777; font-size: 14px; }
+        footer { text-align: center; padding: 20px; color: #777; font-size: 13px; margin-top: 30px; }
     </style>
 </head>
 <body>
@@ -258,16 +75,11 @@
 
 <div class="hero">
     <h2>Staff Dashboard</h2>
-    <p>Manage assigned services and review recent activity</p>
+    <p>Manage assigned services, service hours, and recent check-in activity</p>
 </div>
 
-<% if (flashMessage != null) { %>
-    <div class="flash success"><%= flashMessage %></div>
-<% } %>
-
-<% if (flashError != null) { %>
-    <div class="flash error"><%= flashError %></div>
-<% } %>
+<% if (flashMessage != null) { %><div class="flash success"><%= flashMessage %></div><% } %>
+<% if (flashError != null) { %><div class="flash error"><%= flashError %></div><% } %>
 
 <div class="page">
 
@@ -298,6 +110,7 @@
                         View Details
                     </a>
 
+                    <!-- Staff can update only capacity/status for assigned services. Server-side checks also verify assignment. -->
                     <form action="<%= request.getContextPath() %>/UpdateServiceServlet" method="post">
                         <input type="hidden" name="serviceName" value="<%= s.getServiceName() %>">
                         <input type="number" name="capacity" value="<%= s.getCapacity() %>" min="1" required>
@@ -307,6 +120,21 @@
                             <option value="Available" <%= "Available".equalsIgnoreCase(s.getCurrentStatus()) ? "selected" : "" %>>Available</option>
                             <option value="Closed" <%= "Closed".equalsIgnoreCase(s.getCurrentStatus()) ? "selected" : "" %>>Closed</option>
                         </select>
+
+                        <!-- Optional service-hours update. -->
+                        <select name="dayOfWeek">
+                            <option value="">Do not update hours</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
+                        </select>
+                        <input type="time" name="openTime">
+                        <input type="time" name="closeTime">
+                        <label style="font-size: 13px;"><input type="checkbox" name="isClosed" style="width:auto;"> Closed this day</label>
                         <button type="submit">Update Service</button>
                     </form>
                 </div>
@@ -323,15 +151,7 @@
         <% if (records != null && !records.isEmpty()) { %>
             <table>
                 <thead>
-                    <tr>
-                        <th>Check-In ID</th>
-                        <th>Student ID</th>
-                        <th>Service</th>
-                        <th>Check In Time</th>
-                        <th>Check Out Time</th>
-                        <th>Duration</th>
-                        <th>Validate</th>
-                    </tr>
+                    <tr><th>Check-In ID</th><th>Student ID</th><th>Service</th><th>Check In Time</th><th>Check Out Time</th><th>Duration</th><th>Validate</th></tr>
                 </thead>
                 <tbody>
                     <% for (CheckInRecord r : records) { %>
@@ -343,6 +163,7 @@
                         <td><%= r.getCheckOutTime() == null ? "Active" : r.getCheckOutTime() %></td>
                         <td><%= r.getDuration() == null ? "-" : r.getDuration() + " min" %></td>
                         <td>
+                            <!-- Validation records are saved in ValidationLog and linked through Validates/Flags. -->
                             <form action="<%= request.getContextPath() %>/ValidationServlet" method="post">
                                 <input type="hidden" name="checkInId" value="<%= r.getCheckInId() %>">
                                 <select name="validationType" required>
@@ -364,18 +185,9 @@
 
     <div class="panel">
         <h3>Your Validation History</h3>
-
         <% if (validations != null && !validations.isEmpty()) { %>
             <table>
-                <thead>
-                    <tr>
-                        <th>Validation ID</th>
-                        <th>Check-In ID</th>
-                        <th>Type</th>
-                        <th>Reason</th>
-                        <th>Time</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Validation ID</th><th>Check-In ID</th><th>Type</th><th>Reason</th><th>Time</th></tr></thead>
                 <tbody>
                     <% for (ValidationEntry v : validations) { %>
                     <tr>
@@ -392,12 +204,8 @@
             <p class="empty-note">You have not submitted any validations yet.</p>
         <% } %>
     </div>
-
 </div>
 
-<footer>
-    CampusQueue &mdash; SJSU CS157A Section 2, Team 10
-</footer>
-
+<footer>CampusQueue &mdash; SJSU CS157A Section 2, Team 10</footer>
 </body>
 </html>

@@ -12,6 +12,10 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+/**
+ * Central login/role check for protected pages.
+ * This keeps students, staff, and admins from opening pages that do not belong to their role.
+ */
 @WebFilter(urlPatterns = {
         "/StudentDashboardServlet",
         "/ServiceDetailServlet",
@@ -22,7 +26,8 @@ import java.io.IOException;
         "/ValidationServlet",
         "/AdminDashboardServlet",
         "/ManageServiceServlet",
-        "/AssignStaffServlet"
+        "/AssignStaffServlet",
+        "/UserStatusServlet"
 })
 public class AuthFilter implements Filter {
 
@@ -48,7 +53,8 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        if ((uri.contains("AdminDashboardServlet") || uri.contains("ManageServiceServlet") || uri.contains("AssignStaffServlet"))
+        if ((uri.contains("AdminDashboardServlet") || uri.contains("ManageServiceServlet") ||
+                uri.contains("AssignStaffServlet") || uri.contains("UserStatusServlet"))
                 && !"ADMIN".equals(role)) {
             resp.sendRedirect(req.getContextPath() + "/HomeServlet");
             return;

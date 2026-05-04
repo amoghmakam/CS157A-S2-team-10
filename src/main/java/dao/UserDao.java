@@ -2,6 +2,7 @@ package dao;
 
 import model.User;
 import util.DBUtil;
+import util.PasswordUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,29 +12,57 @@ import java.sql.Statement;
 
 public class UserDao {
 
+    /**
+     * Logs a user in by email and password.
+     *
+     * The original class project stored sample passwords as plain text.
+     * To keep the demo accounts working while improving security, this method:
+     * 1. finds the user by email,
+     * 2. blocks suspended users,
+     * 3. accepts a SHA-256 hashed password,
+     * 4. also accepts old plain-text sample passwords and upgrades them to a hash.
+     */
     public User login(String email, String password) throws SQLException {
-        String sql = "SELECT * FROM Users WHERE email = ? AND password = ?";
+        String sql = "SELECT * FROM Users WHERE email = ?";
 
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, email);
-            ps.setString(2, password);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {
                     return null;
                 }
 
-                User user = new User();
+                String storedPassword = rs.getString("password");
+                boolean hashedMatch = PasswordUtil.verifyPassword(password, storedPassword);
+                boolean legacyPlainTextMatch = password.equals(storedPassword);
+
+                if (!hashedMatch && !legacyPlainTextMatch) {
+                    return null;
+                }
+
+                String accountStatus = getOptionalString(rs, "accountStatus", "ACTIVE");
+                if ("SUSPENDED".equalsIgnoreCase(accountStatus)) {
+                    return null;
+                }
+
                 int userId = rs.getInt("userID");
 
+                // Simple migration path: if an old plain-text password worked, store it as a hash now.
+                if (legacyPlainTextMatch) {
+                    updatePasswordHash(conn, userId, PasswordUtil.hashPassword(password));
+                }
+
+                User user = new User();
                 user.setUserId(userId);
                 user.setFirstName(rs.getString("firstName"));
                 user.setLastName(rs.getString("lastName"));
                 user.setEmail(rs.getString("email"));
-                user.setPassword(rs.getString("password"));
+                user.setPassword("[protected]");
                 user.setRole(getUserRole(conn, userId));
+                user.setAccountStatus(accountStatus);
 
                 return user;
             }
@@ -54,6 +83,10 @@ public class UserDao {
         }
     }
 
+    /**
+     * Creates a new student account.
+     * New passwords are always stored as SHA-256 hashes instead of plain text.
+     */
     public int registerStudent(String firstName, String lastName, String email, String password,
                                String major, String grade) throws SQLException {
         String insertUser = "INSERT INTO Users(firstName, lastName, email, password) VALUES (?, ?, ?, ?)";
@@ -67,7 +100,7 @@ public class UserDao {
                 userPs.setString(1, firstName);
                 userPs.setString(2, lastName);
                 userPs.setString(3, email);
-                userPs.setString(4, password);
+                userPs.setString(4, PasswordUtil.hashPassword(password));
                 userPs.executeUpdate();
 
                 int userId;
@@ -103,6 +136,26 @@ public class UserDao {
         }
     }
 
+    public void updateAccountStatus(int userId, String accountStatus) throws SQLException {
+        String sql = "UPDATE Users SET accountStatus = ? WHERE userID = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, accountStatus);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        }
+    }
+
+    private void updatePasswordHash(Connection conn, int userId, String hashedPassword) throws SQLException {
+        String sql = "UPDATE Users SET password = ? WHERE userID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, hashedPassword);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        }
+    }
+
     private String getUserRole(Connection conn, int userId) throws SQLException {
         if (existsInTable(conn, "Admin", "adminID", userId)) {
             return "ADMIN";
@@ -125,6 +178,15 @@ public class UserDao {
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
             }
+        }
+    }
+
+    private String getOptionalString(ResultSet rs, String columnName, String defaultValue) {
+        try {
+            String value = rs.getString(columnName);
+            return value == null ? defaultValue : value;
+        } catch (SQLException e) {
+            return defaultValue;
         }
     }
 }

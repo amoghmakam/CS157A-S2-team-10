@@ -25,12 +25,16 @@ public class LoginServlet extends HttpServlet {
             User user = userDao.login(email, password);
 
             if (user == null) {
-                request.getSession().setAttribute("flashError", "Invalid email or password.");
+                request.getSession().setAttribute("flashError", "Invalid email/password or suspended account.");
                 response.sendRedirect(request.getContextPath() + "/HomeServlet");
                 return;
             }
 
             HttpSession session = request.getSession();
+
+            // Sessions expire after 30 minutes of inactivity.
+            session.setMaxInactiveInterval(30 * 60);
+
             session.setAttribute("userId", user.getUserId());
             session.setAttribute("name", user.getFirstName());
             session.setAttribute("role", user.getRole());

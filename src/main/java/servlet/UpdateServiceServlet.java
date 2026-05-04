@@ -19,9 +19,14 @@ public class UpdateServiceServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Object userIdObj = request.getSession().getAttribute("userId");
+        String role = (String) request.getSession().getAttribute("role");
         String serviceName = request.getParameter("serviceName");
         String capacityValue = request.getParameter("capacity");
         String status = request.getParameter("status");
+        String dayOfWeek = request.getParameter("dayOfWeek");
+        String openTime = request.getParameter("openTime");
+        String closeTime = request.getParameter("closeTime");
+        boolean isClosed = request.getParameter("isClosed") != null;
 
         if (userIdObj == null) {
             response.sendRedirect(request.getContextPath() + "/HomeServlet");
@@ -36,15 +41,27 @@ public class UpdateServiceServlet extends HttpServlet {
             return;
         }
 
-        int staffId = (Integer) userIdObj;
+        int userId = (Integer) userIdObj;
 
         try {
+            if ("STAFF".equals(role) && !serviceDao.isStaffAssignedToService(userId, serviceName)) {
+                request.getSession().setAttribute("flashError", "You can only update services assigned to you.");
+                response.sendRedirect(request.getContextPath() + "/StaffDashboardServlet");
+                return;
+            }
+
             int capacity = Integer.parseInt(capacityValue);
             serviceDao.updateService(serviceName, capacity, status);
-            auditDao.log(staffId, "Update Service",
+
+            // Hours are optional so old forms still work.
+            if (dayOfWeek != null && !dayOfWeek.trim().isEmpty()) {
+                serviceDao.updateServiceHours(serviceName, dayOfWeek, openTime, closeTime, isClosed);
+            }
+
+            auditDao.log(userId, "Update Service",
                     "Updated " + serviceName + " with status " + status + " and capacity " + capacity);
             request.getSession().setAttribute("flashMessage", "Service updated successfully.");
-            response.sendRedirect(request.getContextPath() + "/StaffDashboardServlet");
+            response.sendRedirect(request.getContextPath() + ("ADMIN".equals(role) ? "/AdminDashboardServlet" : "/StaffDashboardServlet"));
         } catch (NumberFormatException e) {
             request.getSession().setAttribute("flashError", "Capacity must be a valid number.");
             response.sendRedirect(request.getContextPath() + "/StaffDashboardServlet");

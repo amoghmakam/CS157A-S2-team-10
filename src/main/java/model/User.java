@@ -1,5 +1,9 @@
 package model;
 
+/**
+ * Simple Java object that represents a row from the Users table.
+ * The role is calculated from the Student, Staff, and Admin tables.
+ */
 public class User {
     private int userId;
     private String firstName;
@@ -7,6 +11,7 @@ public class User {
     private String email;
     private String password;
     private String role;
+    private String accountStatus;
 
     public User() {
     }
@@ -57,5 +62,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getAccountStatus() {
+        return accountStatus;
+    }
+
+    public void setAccountStatus(String accountStatus) {
+        this.accountStatus = accountStatus;
     }
 }

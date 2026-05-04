@@ -4,18 +4,29 @@ Use this checklist to verify the project before submission or demo.
 
 ## Build and Deployment
 
+- [ ] Project uses Tomcat 10 because the Java code imports `jakarta.servlet`.
 - [ ] Project compiles with Tomcat 10 `servlet-api.jar` and `jsp-api.jar`.
-- [ ] MySQL connector jar exists in `web/WEB-INF/lib/mysql-connector-j-9.6.0.jar`.
-- [ ] App deploys to Tomcat without copying `src` into `webapps`.
+- [ ] MySQL connector jar is available either in `web/WEB-INF/lib/` or Tomcat's `lib/` folder.
+- [ ] `scripts/build_deploy_mac.sh` compiles the app and deploys it as `CampusQueueFork`.
+- [ ] App deploys to Tomcat without copying raw `src` into `webapps`.
 - [ ] App opens at `http://localhost:8080/CampusQueueFork/HomeServlet` or the configured app name.
 
 ## Database
 
 - [ ] `schema.sql` creates all entity and relationship tables.
 - [ ] `upgrade_basic_features.sql` adds account moderation support and indexes.
+- [ ] `demo_accounts.sql` creates the official student, staff, and admin demo accounts.
 - [ ] `test_basic_features.sql` runs and displays users, services, active check-ins, staff assignments, validations, and audit logs.
+- [ ] `scripts/setup_db_mac.sh` runs schema, upgrades, demo accounts, and verification queries in the correct order.
 - [ ] Foreign keys are used for the main relationships.
 - [ ] Relationship tables are populated by sample data and by Java runtime actions.
+
+## Official Demo Accounts
+
+- [ ] Student demo login works: `student.demo@sjsu.edu` / `pass123`.
+- [ ] Staff demo login works: `staff.demo@sjsu.edu` / `pass123`.
+- [ ] Admin demo login works: `admin.demo@sjsu.edu` / `pass123`.
+- [ ] Staff demo account is assigned to SRAC Gym.
 
 ## Student Requirements
 
@@ -59,13 +70,25 @@ Use this checklist to verify the project before submission or demo.
 - [ ] Existing plain-text demo passwords are upgraded to hashes after successful login.
 - [ ] Sessions expire after 30 minutes of inactivity.
 - [ ] `AuthFilter` protects student, staff, and admin routes.
+- [ ] Staff actions are checked server-side against assigned services.
 - [ ] Audit actions insert into `AuditLog` and `Performs`.
 
 ## Documentation and Comments
 
-- [ ] `README.md` explains setup, running, accounts, and demo flow.
+- [ ] `README.md` explains setup, running, accounts, architecture, database coverage, and demo flow.
+- [ ] `RUN_AND_TEST.md` gives exact local run/test commands.
 - [ ] `IMPLEMENTATION_NOTES.md` explains the implementation in intro-class terms.
+- [ ] `GRADING_CHECKLIST.md` provides a final verification checklist.
 - [ ] Core DAO classes have comments explaining database operations.
 - [ ] Core Servlet classes have comments explaining route behavior.
 - [ ] JSP pages include comments for major forms/actions.
-- [ ] SQL files include comments explaining schema/setup/test purpose.
+- [ ] SQL files include comments explaining schema/setup/test/demo purpose.
+
+## Final Before Submission
+
+- [ ] Run `git pull origin main`.
+- [ ] Run `sh scripts/setup_db_mac.sh`.
+- [ ] Run `sh scripts/build_deploy_mac.sh`.
+- [ ] Log in with all three official demo accounts.
+- [ ] Walk through the Student, Staff, and Admin demo flows.
+- [ ] Confirm audit log entries appear after demo actions.

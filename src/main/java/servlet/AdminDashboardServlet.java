@@ -1,5 +1,6 @@
 package servlet;
 
+import dao.AdminAnalyticsDao;
 import dao.AdminDao;
 import dao.ServiceDao;
 import model.Service;
@@ -18,7 +19,8 @@ import java.util.Map;
 @WebServlet("/AdminDashboardServlet")
 public class AdminDashboardServlet extends HttpServlet {
     private final ServiceDao serviceDao = new ServiceDao();
-    private final AdminDao adminDao = new AdminDao();      //Create DAO object
+    private final AdminDao adminDao = new AdminDao();
+    private final AdminAnalyticsDao adminAnalyticsDao = new AdminAnalyticsDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -28,6 +30,7 @@ public class AdminDashboardServlet extends HttpServlet {
 
             Map<String, List<WaitTrend>> dayAnalytics = new LinkedHashMap<>();
             Map<String, List<WaitTrend>> hourAnalytics = new LinkedHashMap<>();
+
             for (Service s : services) {
                 dayAnalytics.put(s.getServiceName(), serviceDao.getAvgWaitByDay(s.getServiceName()));
                 hourAnalytics.put(s.getServiceName(), serviceDao.getAvgWaitByHour(s.getServiceName()));
@@ -37,6 +40,9 @@ public class AdminDashboardServlet extends HttpServlet {
             request.setAttribute("auditLogs", adminDao.getAuditLogs());
             request.setAttribute("dayAnalytics", dayAnalytics);
             request.setAttribute("hourAnalytics", hourAnalytics);
+
+            request.setAttribute("analytics", adminAnalyticsDao.getAdminAnalytics());
+
             request.getRequestDispatcher("/admin/dashboard.jsp").forward(request, response);
         } catch (Exception e) {
             throw new ServletException("Unable to load admin dashboard.", e);

@@ -1,6 +1,6 @@
 -- CampusQueue upgrade_basic_features.sql
 -- Run this after sql/schema.sql.
--- This file keeps extra database upgrades simple and easy to explain for an intro database class.
+-- Keeps extra database upgrades simple.
 
 USE team10;
 
@@ -55,7 +55,6 @@ CREATE INDEX idx_auditlog_action_time ON AuditLog(actionType, actionTime);
 -- Notes
 -- ==========================================================
 
--- The sample data originally used plain-text passwords.
+-- Sample data originally used plain-text passwords.
 -- The Java code accepts old passwords once and automatically upgrades them to SHA-256 at login.
 -- New registered users are always stored with a SHA-256 hash.
--- This script intentionally avoids advanced database features so it stays beginner friendly.

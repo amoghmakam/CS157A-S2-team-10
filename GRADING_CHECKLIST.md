@@ -58,6 +58,7 @@ Use this checklist to verify the project before submission or demo.
 - [ ] Admin can edit services.
 - [ ] Admin can deactivate services.
 - [ ] Admin can remove services.
+- [ ] Admin can add, edit, and remove service categories.
 - [ ] Admin can assign staff to services.
 - [ ] Staff assignment inserts into `StaffAssignment`, `AssignedTo`, `Covers`, and `Manages`.
 - [ ] Admin can suspend and reactivate users.

@@ -36,6 +36,7 @@ This project uses beginner-friendly Java/JSP/Servlet/JDBC code and a MySQL datab
 - Edit existing services.
 - Deactivate services by marking them closed.
 - Remove services.
+- Add, edit, and remove service categories.
 - Assign staff to services.
 - Suspend or reactivate user accounts.
 - View system-wide audit logs.

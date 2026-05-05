@@ -33,6 +33,47 @@ public class ManageServiceServlet extends HttpServlet {
         int adminId = (Integer) userIdObj;
         String serviceName = request.getParameter("serviceName");
 
+        if ("addCategory".equals(action) || "editCategory".equals(action) || "removeCategory".equals(action)) {
+            String categoryName = request.getParameter("categoryName");
+            String oldCategoryName = request.getParameter("oldCategoryName");
+            String categoryDescription = request.getParameter("categoryDescription");
+
+            try {
+                if ("addCategory".equals(action)) {
+                    if (categoryName == null || categoryName.trim().isEmpty()) {
+                        request.getSession().setAttribute("flashError", "Category name is required.");
+                    } else {
+                        serviceDao.addCategory(categoryName, categoryDescription);
+                        auditDao.log(adminId, "Add Category", "Added category " + categoryName);
+                        request.getSession().setAttribute("flashMessage", "Category added successfully.");
+                    }
+                } else if ("editCategory".equals(action)) {
+                    if (oldCategoryName == null || oldCategoryName.trim().isEmpty()
+                            || categoryName == null || categoryName.trim().isEmpty()) {
+                        request.getSession().setAttribute("flashError", "Old and new category names are required.");
+                    } else {
+                        serviceDao.updateCategory(oldCategoryName, categoryName, categoryDescription);
+                        auditDao.log(adminId, "Edit Category", "Edited category " + oldCategoryName);
+                        request.getSession().setAttribute("flashMessage", "Category edited successfully.");
+                    }
+                } else {
+                    if (categoryName == null || categoryName.trim().isEmpty()) {
+                        request.getSession().setAttribute("flashError", "Category name is required.");
+                    } else {
+                        serviceDao.removeCategory(categoryName);
+                        auditDao.log(adminId, "Remove Category", "Removed category " + categoryName);
+                        request.getSession().setAttribute("flashMessage", "Category removed successfully.");
+                    }
+                }
+
+                response.sendRedirect(request.getContextPath() + "/AdminDashboardServlet");
+            } catch (Exception e) {
+                request.getSession().setAttribute("flashError", "Unable to manage category. Make sure no services still use this category before removing it.");
+                response.sendRedirect(request.getContextPath() + "/AdminDashboardServlet");
+            }
+            return;
+        }
+
         try {
             if ("deactivate".equals(action)) {
                 serviceDao.deactivateService(serviceName);

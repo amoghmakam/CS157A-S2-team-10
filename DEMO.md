@@ -93,5 +93,6 @@ pass123  Demo flow:
 - Deactivate it
 - Remove it
 - Assign staff
+- Add/edit/remove a service category
 - Suspend/reactivate a user
 - Show audit logs

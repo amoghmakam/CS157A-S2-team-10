@@ -37,6 +37,7 @@ public class AdminDashboardServlet extends HttpServlet {
             }
 
             request.setAttribute("services", services);
+            request.setAttribute("categories", serviceDao.getAllCategories());
             request.setAttribute("auditLogs", adminDao.getAuditLogs());
             request.setAttribute("dayAnalytics", dayAnalytics);
             request.setAttribute("hourAnalytics", hourAnalytics);

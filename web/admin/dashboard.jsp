@@ -11,6 +11,7 @@
     // Data is prepared by AdminDashboardServlet before forwarding to this JSP.
     List<Service> services = (List<Service>) request.getAttribute("services");
     List<AuditLog> auditLogs = (List<AuditLog>) request.getAttribute("auditLogs");
+    List<String[]> categories = (List<String[]>) request.getAttribute("categories");
 
     String flashMessage = (String) session.getAttribute("flashMessage");
     String flashError = (String) session.getAttribute("flashError");
@@ -174,6 +175,55 @@
     </div>
 
     <div class="panel">
+        <h3>Manage Service Categories</h3>
+        <p class="empty-note" style="margin-bottom: 12px;">Admins can add, edit, and remove service categories used by campus services.</p>
+
+        <% if (categories != null && !categories.isEmpty()) { %>
+            <table style="margin-bottom: 16px;">
+                <thead>
+                    <tr><th>Category</th><th>Description</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                    <% for (String[] c : categories) { %>
+                    <tr>
+                        <td><%= c[0] %></td>
+                        <td><%= c[1] == null ? "" : c[1] %></td>
+                        <td>
+                            <form class="small-form" action="<%= request.getContextPath() %>/ManageServiceServlet" method="post">
+                                <input type="hidden" name="action" value="removeCategory">
+                                <input type="hidden" name="categoryName" value="<%= c[0] %>">
+                                <button class="danger" type="submit">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p class="empty-note">No categories are currently in the system.</p>
+        <% } %>
+
+        <form action="<%= request.getContextPath() %>/ManageServiceServlet" method="post" style="margin-bottom: 14px;">
+            <input type="hidden" name="action" value="addCategory">
+            <div class="form-grid">
+                <input type="text" name="categoryName" placeholder="New Category Name" required>
+                <input type="text" name="categoryDescription" placeholder="Category Description">
+            </div>
+            <button type="submit">Add Category</button>
+        </form>
+
+        <form action="<%= request.getContextPath() %>/ManageServiceServlet" method="post">
+            <input type="hidden" name="action" value="editCategory">
+            <div class="form-grid">
+                <input type="text" name="oldCategoryName" placeholder="Old Category Name" required>
+                <input type="text" name="categoryName" placeholder="New/Current Category Name" required>
+                <input type="text" name="categoryDescription" placeholder="Updated Category Description">
+            </div>
+            <button type="submit">Edit Category</button>
+        </form>
+    </div>
+
+    <div class="panel">
         <h3>Add Service</h3>
         <form action="<%= request.getContextPath() %>/ManageServiceServlet" method="post">
             <input type="hidden" name="action" value="add">
@@ -189,11 +239,17 @@
                     <option value="Available">Available</option>
                     <option value="Closed">Closed</option>
                 </select>
-                <select name="categoryName">
-                    <option value="Dining">Dining</option>
-                    <option value="Fitness">Fitness</option>
-                    <option value="Advising">Advising</option>
-                    <option value="Parking">Parking</option>
+                <select name="categoryName" required>
+                    <% if (categories != null && !categories.isEmpty()) {
+                           for (String[] c : categories) { %>
+                        <option value="<%= c[0] %>"><%= c[0] %></option>
+                    <%     }
+                       } else { %>
+                        <option value="Dining">Dining</option>
+                        <option value="Fitness">Fitness</option>
+                        <option value="Advising">Advising</option>
+                        <option value="Parking">Parking</option>
+                    <% } %>
                 </select>
             </div>
             <button type="submit">Add Service</button>
@@ -218,11 +274,17 @@
                     <option value="Available">Available</option>
                     <option value="Closed">Closed</option>
                 </select>
-                <select name="categoryName">
-                    <option value="Dining">Dining</option>
-                    <option value="Fitness">Fitness</option>
-                    <option value="Advising">Advising</option>
-                    <option value="Parking">Parking</option>
+                <select name="categoryName" required>
+                    <% if (categories != null && !categories.isEmpty()) {
+                           for (String[] c : categories) { %>
+                        <option value="<%= c[0] %>"><%= c[0] %></option>
+                    <%     }
+                       } else { %>
+                        <option value="Dining">Dining</option>
+                        <option value="Fitness">Fitness</option>
+                        <option value="Advising">Advising</option>
+                        <option value="Parking">Parking</option>
+                    <% } %>
                 </select>
             </div>
             <button type="submit">Edit Service</button>

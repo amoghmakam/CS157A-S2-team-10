@@ -369,6 +369,69 @@ public class ServiceDao {
         }
     }
 
+
+    /**
+     * Returns all service categories so the admin page does not need hard-coded category options.
+     * Each String[] stores: [0] categoryName, [1] categoryDescription.
+     */
+    public List<String[]> getAllCategories() throws SQLException {
+        List<String[]> categories = new ArrayList<>();
+        String sql = "SELECT categoryName, categoryDescription FROM ServiceCategory ORDER BY categoryName";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                categories.add(new String[] {
+                        rs.getString("categoryName"),
+                        rs.getString("categoryDescription")
+                });
+            }
+        }
+
+        return categories;
+    }
+
+    /** Adds a new service category for admin category management. */
+    public void addCategory(String categoryName, String categoryDescription) throws SQLException {
+        String sql = "INSERT INTO ServiceCategory(categoryName, categoryDescription) VALUES (?, ?)";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, categoryName);
+            ps.setString(2, categoryDescription);
+            ps.executeUpdate();
+        }
+    }
+
+    /** Edits an existing service category name/description. */
+    public void updateCategory(String oldCategoryName, String newCategoryName, String categoryDescription) throws SQLException {
+        String sql = "UPDATE ServiceCategory SET categoryName = ?, categoryDescription = ? WHERE categoryName = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newCategoryName);
+            ps.setString(2, categoryDescription);
+            ps.setString(3, oldCategoryName);
+            ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Removes a service category.
+     * If services still use the category, MySQL foreign keys will block the delete.
+     */
+    public void removeCategory(String categoryName) throws SQLException {
+        String sql = "DELETE FROM ServiceCategory WHERE categoryName = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, categoryName);
+            ps.executeUpdate();
+        }
+    }
+
     private String getCrowdTrendNext24h(Connection conn, String serviceName)
             throws SQLException {
         String sql = "SELECT recordHour, AVG(avgWaitTime) as avgWait " +

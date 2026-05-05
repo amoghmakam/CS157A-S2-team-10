@@ -160,6 +160,57 @@ public class ServiceDao {
         return trends;
     }
 
+    public List<WaitTrend> getAvgWaitByDayForStaff(int staffId) throws SQLException {
+        List<WaitTrend> trends = new ArrayList<>();
+        String sql = "SELECT DAYNAME(c.checkInTime) AS dayName, AVG(c.duration) AS avgWait, COUNT(*) AS total " +
+                     "FROM CheckIn c JOIN StaffAssignment sa ON c.serviceName = sa.serviceName " +
+                     "WHERE sa.staffID = ? AND c.duration IS NOT NULL " +
+                     "GROUP BY DAYOFWEEK(c.checkInTime), DAYNAME(c.checkInTime) " +
+                     "ORDER BY DAYOFWEEK(c.checkInTime)";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, staffId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    WaitTrend t = new WaitTrend();
+                    t.setLabel(rs.getString("dayName"));
+                    double avg = rs.getDouble("avgWait");
+                    t.setAvgWait(avg);
+                    t.setTotalCheckIns(rs.getInt("total"));
+                    t.setCrowdLevel(avg < 50 ? "Low" : avg < 150 ? "Medium" : "High");
+                    trends.add(t);
+                }
+            }
+        }
+        return trends;
+    }
+
+    public List<WaitTrend> getAvgWaitByHourForStaff(int staffId) throws SQLException {
+        List<WaitTrend> trends = new ArrayList<>();
+        String sql = "SELECT HOUR(c.checkInTime) AS hr, AVG(c.duration) AS avgWait, COUNT(*) AS total " +
+                     "FROM CheckIn c JOIN StaffAssignment sa ON c.serviceName = sa.serviceName " +
+                     "WHERE sa.staffID = ? AND c.duration IS NOT NULL " +
+                     "GROUP BY HOUR(c.checkInTime) ORDER BY HOUR(c.checkInTime)";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, staffId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    WaitTrend t = new WaitTrend();
+                    int hr = rs.getInt("hr");
+                    String label = hr == 0 ? "12am" : hr < 12 ? hr + "am" : hr == 12 ? "12pm" : (hr - 12) + "pm";
+                    t.setLabel(label);
+                    double avg = rs.getDouble("avgWait");
+                    t.setAvgWait(avg);
+                    t.setTotalCheckIns(rs.getInt("total"));
+                    t.setCrowdLevel(avg < 50 ? "Low" : avg < 150 ? "Medium" : "High");
+                    trends.add(t);
+                }
+            }
+        }
+        return trends;
+    }
+
     public List<Service> getAssignedServices(int staffId) throws SQLException {
         List<Service> services = new ArrayList<>();
 

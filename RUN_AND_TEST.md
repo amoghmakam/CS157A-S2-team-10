@@ -9,11 +9,9 @@
 ## 1. Clone the fork separately
 
 ```bash
-cd ~
-mkdir -p campusqueue-testing
-cd campusqueue-testing
-git clone https://github.com/oops408/CS157A-S2-team-10.git campusqueue-fork
-cd campusqueue-fork
+cd ~/Downloads
+git clone https://github.com/amoghmakam/CS157A-S2-team-10.git campusqueue
+cd campusqueue
 ```
 
 ## 2. Set environment variables

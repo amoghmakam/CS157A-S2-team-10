@@ -28,6 +28,8 @@ public class ServiceDetailServlet extends HttpServlet {
             request.setAttribute("service", serviceDao.getServiceByName(serviceName));
             request.setAttribute("hours", serviceDao.getServiceHours(serviceName));
             request.setAttribute("trends", serviceDao.getWaitTrends(serviceName));
+            request.setAttribute("dayTrends", serviceDao.getAvgWaitByDay(serviceName));
+            request.setAttribute("hourTrends", serviceDao.getAvgWaitByHour(serviceName));
             request.getRequestDispatcher("/student/service-detail.jsp").forward(request, response);
         } catch (Exception e) {
             throw new ServletException("Unable to load service details.", e);

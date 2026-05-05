@@ -4,6 +4,9 @@
 <%@ page import="model.AuditLog" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="model.WaitTrend" %>
+<%@ page import="model.AdminAnalytics" %>
+<%@ page import="model.ServiceAnalyticsRow" %>
+<%@ page import="model.HourlyVolumeRow" %>
 <%
     // Data is prepared by AdminDashboardServlet before forwarding to this JSP.
     List<Service> services = (List<Service>) request.getAttribute("services");
@@ -67,6 +70,7 @@
 
 <div class="hero">
     <h2>Admin Dashboard</h2>
+    
     <p>Manage services, staff assignments, user moderation, and audit logs</p>
 </div>
 
@@ -74,6 +78,60 @@
 <% if (flashError != null) { %><div class="flash error"><%= flashError %></div><% } %>
 
 <div class="page">
+    <%
+    AdminAnalytics analytics = (AdminAnalytics) request.getAttribute("analytics");
+%>
+
+<% if (analytics != null) { %>
+    <div class="panel">
+        <h3>System Analytics</h3>
+
+    <p><strong>Total Services:</strong> <%= analytics.getTotalServices() %></p>
+    <p><strong>Open Services:</strong> <%= analytics.getOpenServices() %></p>
+    <p><strong>Total Users:</strong> <%= analytics.getTotalUsers() %></p>
+    <p><strong>Active Check-ins:</strong> <%= analytics.getActiveCheckIns() %></p>
+    <p><strong>Completed Visits:</strong> <%= analytics.getTotalCompletedVisits() %></p>
+    <p><strong>Average Visit Duration:</strong> <%= String.format("%.1f", analytics.getAverageVisitMinutes()) %> minutes</p>
+    <p><strong>Flagged Records:</strong> <%= analytics.getFlaggedRecords() %></p>
+
+    <h3>Busiest Services</h3>
+    <table border="1">
+        <tr>
+            <th>Service</th>
+            <th>Total Visits</th>
+            <th>Active Now</th>
+            <th>Avg Duration</th>
+        </tr>
+
+        <% for (ServiceAnalyticsRow row : analytics.getBusiestServices()) { %>
+            <tr>
+                <td><%= row.getServiceName() %></td>
+                <td><%= row.getTotalVisits() %></td>
+                <td><%= row.getActiveVisits() %></td>
+                <td><%= String.format("%.1f", row.getAverageDuration()) %> min</td>
+            </tr>
+        <% } %>
+    </table>
+
+    <h3>Check-in Volume by Hour</h3>
+    <table border="1">
+        <tr>
+            <th>Hour</th>
+            <th>Check-ins</th>
+            <th>Check-outs</th>
+        </tr>
+
+        <% for (HourlyVolumeRow row : analytics.getHourlyVolume()) { %>
+            <tr>
+                <td><%= row.getHour() %>:00</td>
+                <td><%= row.getCheckIns() %></td>
+                <td><%= row.getCheckOuts() %></td>
+            </tr>
+        <% } %>
+    </table>
+</div>
+<% } %>
+    
 
     <div class="panel">
         <h3>All Services</h3>

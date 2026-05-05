@@ -163,7 +163,7 @@ The deploy script:
 - Finds Tomcat 10 using `TOMCAT_HOME`.
 - Uses the MySQL connector jar from either the project or Tomcat `lib` folder.
 - Compiles all Java source files into `build/classes`.
-- Deploys the app as `CampusQueueFork`.
+- Deploys the app as `CampusQueue`.
 - Copies compiled classes into `WEB-INF/classes`.
 - Copies the MySQL connector into `WEB-INF/lib`.
 - Restarts Tomcat.
@@ -171,7 +171,7 @@ The deploy script:
 ### 5. Open the app
 
 ```text
-http://localhost:8080/CampusQueueFork/HomeServlet
+http://localhost:8080/CampusQueue/HomeServlet
 ```
 
 ---

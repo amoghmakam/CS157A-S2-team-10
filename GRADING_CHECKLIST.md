@@ -7,9 +7,9 @@ Use this checklist to verify the project before submission or demo.
 - [ ] Project uses Tomcat 10 because the Java code imports `jakarta.servlet`.
 - [ ] Project compiles with Tomcat 10 `servlet-api.jar` and `jsp-api.jar`.
 - [ ] MySQL connector jar is available either in `web/WEB-INF/lib/` or Tomcat's `lib/` folder.
-- [ ] `scripts/build_deploy_mac.sh` compiles the app and deploys it as `CampusQueueFork`.
+- [ ] `scripts/build_deploy_mac.sh` compiles the app and deploys it as `CampusQueue`.
 - [ ] App deploys to Tomcat without copying raw `src` into `webapps`.
-- [ ] App opens at `http://localhost:8080/CampusQueueFork/HomeServlet` or the configured app name.
+- [ ] App opens at `http://localhost:8080/CampusQueue/HomeServlet` or the configured app name.
 
 ## Database
 

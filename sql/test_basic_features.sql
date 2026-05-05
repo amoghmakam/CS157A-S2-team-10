@@ -1,6 +1,6 @@
 -- CampusQueue test_basic_features.sql
--- These are simple checks you can run after schema.sql, upgrade_basic_features.sql, and demo_accounts.sql.
--- The goal is to verify that the main project features have data available for the demo.
+-- Simple checks run after schema.sql, upgrade_basic_features.sql, and demo_accounts.sql.
+-- Goal is to verify that the main project features have data available for the demo.
 
 USE team10;
 

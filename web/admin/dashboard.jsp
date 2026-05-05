@@ -2,6 +2,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="model.Service" %>
 <%@ page import="model.AuditLog" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="model.WaitTrend" %>
 <%
     // Data is prepared by AdminDashboardServlet before forwarding to this JSP.
     List<Service> services = (List<Service>) request.getAttribute("services");
@@ -193,6 +195,92 @@
             </div>
             <button type="submit">Update Account Status</button>
         </form>
+    </div>
+
+    <div class="panel">
+        <h3>Operational Analytics</h3>
+        <p style="font-size:13px; color:#555; margin-bottom:16px;">Average wait time and event volume per service.</p>
+        <%
+            Map<String, List<WaitTrend>> dayAnalytics = (Map<String, List<WaitTrend>>) request.getAttribute("dayAnalytics");
+            Map<String, List<WaitTrend>> hourAnalytics = (Map<String, List<WaitTrend>>) request.getAttribute("hourAnalytics");
+            String[] aDays = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
+            String[] aShort = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
+            String[] aHours = {"12am","1am","2am","3am","4am","5am","6am","7am","8am","9am","10am","11am",
+                               "12pm","1pm","2pm","3pm","4pm","5pm","6pm","7pm","8pm","9pm","10pm","11pm"};
+
+            if (dayAnalytics != null && !dayAnalytics.isEmpty()) {
+                for (String svcName : dayAnalytics.keySet()) {
+                    List<WaitTrend> dList = dayAnalytics.get(svcName);
+                    List<WaitTrend> hList = hourAnalytics != null ? hourAnalytics.get(svcName) : null;
+
+                    java.util.Map<String, WaitTrend> dMap = new java.util.HashMap<>();
+                    if (dList != null) { for (WaitTrend t : dList) dMap.put(t.getLabel(), t); }
+                    java.util.Map<String, WaitTrend> hMap = new java.util.HashMap<>();
+                    if (hList != null) { for (WaitTrend t : hList) hMap.put(t.getLabel(), t); }
+
+                    int maxVol = 1;
+                    if (hList != null) { for (WaitTrend t : hList) { if (t.getTotalCheckIns() > maxVol) maxVol = t.getTotalCheckIns(); } }
+        %>
+        <div style="border:1px solid #e6eef7; border-radius:8px; padding:16px; margin-bottom:18px;">
+            <strong style="display:block; font-size:16px; color:#003366; margin-bottom:14px;"><%= svcName %></strong>
+
+            <span style="display:block; font-size:12px; color:#555; margin-bottom:6px;">Avg Wait by Day</span>
+            <div style="display:flex; gap:4px; margin-bottom:14px;">
+                <% for (int i = 0; i < aDays.length; i++) {
+                       String d = aDays[i]; String ds = aShort[i];
+                       String bg, tip;
+                       if (dMap.containsKey(d)) {
+                           WaitTrend t = dMap.get(d);
+                           String cl = t.getCrowdLevel();
+                           bg = "Low".equals(cl) ? "#28a745" : "Medium".equals(cl) ? "#ffc107" : "#dc3545";
+                           tip = d + ": avg " + String.format("%.1f", t.getAvgWait()) + " min, " + t.getTotalCheckIns() + " check-ins";
+                       } else { bg = "#e0e0e0"; tip = d + ": No data"; }
+                %>
+                <div title="<%= tip %>" style="flex:1; background:<%= bg %>; border-radius:5px; padding:8px 0; text-align:center; font-size:11px; color:<%= "#ffc107".equals(bg) ? "#333" : "white" %>; font-weight:bold; cursor:default;">
+                    <%= ds %>
+                </div>
+                <% } %>
+            </div>
+
+            <span style="display:block; font-size:12px; color:#555; margin-bottom:6px;">Avg Wait by Hour</span>
+            <div style="display:flex; gap:2px; margin-bottom:6px;">
+                <% for (String hl : aHours) {
+                       String bg2, tc2, tip2;
+                       if (hMap.containsKey(hl)) {
+                           WaitTrend t = hMap.get(hl);
+                           String cl = t.getCrowdLevel();
+                           bg2 = "Low".equals(cl) ? "#28a745" : "Medium".equals(cl) ? "#ffc107" : "#dc3545";
+                           tc2 = "Medium".equals(cl) ? "#333" : "white";
+                           tip2 = hl + ": avg " + String.format("%.1f", t.getAvgWait()) + " min (" + cl + ")";
+                       } else { bg2 = "#e0e0e0"; tc2 = "#888"; tip2 = hl + ": No data"; }
+                %>
+                <div title="<%= tip2 %>" style="flex:1; background:<%= bg2 %>; border-radius:3px; height:40px; cursor:default; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                    <span style="font-size:9px; color:<%= tc2 %>; font-weight:bold; line-height:1;"><%= hl %></span>
+                </div>
+                <% } %>
+            </div>
+
+            <span style="display:block; font-size:12px; color:#555; margin-bottom:6px; margin-top:10px;">Event Volume by Hour</span>
+            <div style="display:flex; gap:2px; align-items:flex-end; height:50px; margin-bottom:4px;">
+                <% for (String hl : aHours) {
+                       int vol = hMap.containsKey(hl) ? hMap.get(hl).getTotalCheckIns() : 0;
+                       int barH = maxVol > 0 ? (int)(((double) vol / maxVol) * 46) : 0;
+                %>
+                <div title="<%= hl %>: <%= vol %> check-ins" style="flex:1; background:<%= vol > 0 ? "#003366" : "#e0e0e0" %>; border-radius:2px 2px 0 0; height:<%= barH %>px; cursor:default;"></div>
+                <% } %>
+            </div>
+        </div>
+        <% } } else { %>
+        <p class="empty-note">No analytics data available yet.</p>
+        <% } %>
+
+        <div style="display:flex; gap:6px; flex-wrap:wrap; font-size:11px; color:#555;">
+            <span style="background:#28a745; color:white; padding:2px 8px; border-radius:3px;">Low wait</span>
+            <span style="background:#ffc107; color:#333; padding:2px 8px; border-radius:3px;">Medium wait</span>
+            <span style="background:#dc3545; color:white; padding:2px 8px; border-radius:3px;">High wait</span>
+            <span style="background:#e0e0e0; color:#333; padding:2px 8px; border-radius:3px;">No data</span>
+            <span style="background:#003366; color:white; padding:2px 8px; border-radius:3px;">Event volume</span>
+        </div>
     </div>
 
     <div class="panel">

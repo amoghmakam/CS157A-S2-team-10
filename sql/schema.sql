@@ -1,6 +1,6 @@
 -- CampusQueue schema.sql
--- Simple organized version based on the original design
--- Keeps all entities, relationship tables, names, and sample data
+-- Simple, organized SQL Schema based on our original design.
+-- Keep all entities, relationship tables, names, and sample data.
 
 CREATE DATABASE IF NOT EXISTS team10;
 USE team10;
@@ -47,6 +47,7 @@ CREATE TABLE Users (
     UNIQUE (email)
 );
 
+-- CASCADE: automatically propagate changes from parent to related child tables.
 CREATE TABLE Student (
     studentID INT NOT NULL,
     major VARCHAR(100) NOT NULL,

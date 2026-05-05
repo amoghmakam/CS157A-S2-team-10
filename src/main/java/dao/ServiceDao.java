@@ -111,6 +111,55 @@ public class ServiceDao {
         return trends;
     }
 
+    public List<WaitTrend> getAvgWaitByDay(String serviceName) throws SQLException {
+        List<WaitTrend> trends = new ArrayList<>();
+        String sql = "SELECT DAYNAME(checkInTime) AS dayName, AVG(duration) AS avgWait, COUNT(*) AS total " +
+                     "FROM CheckIn WHERE serviceName = ? AND duration IS NOT NULL " +
+                     "GROUP BY DAYOFWEEK(checkInTime), DAYNAME(checkInTime) " +
+                     "ORDER BY DAYOFWEEK(checkInTime)";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, serviceName);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    WaitTrend t = new WaitTrend();
+                    t.setLabel(rs.getString("dayName"));
+                    double avg = rs.getDouble("avgWait");
+                    t.setAvgWait(avg);
+                    t.setTotalCheckIns(rs.getInt("total"));
+                    t.setCrowdLevel(avg < 50 ? "Low" : avg < 150 ? "Medium" : "High");
+                    trends.add(t);
+                }
+            }
+        }
+        return trends;
+    }
+
+    public List<WaitTrend> getAvgWaitByHour(String serviceName) throws SQLException {
+        List<WaitTrend> trends = new ArrayList<>();
+        String sql = "SELECT HOUR(checkInTime) AS hr, AVG(duration) AS avgWait, COUNT(*) AS total " +
+                     "FROM CheckIn WHERE serviceName = ? AND duration IS NOT NULL " +
+                     "GROUP BY HOUR(checkInTime) ORDER BY HOUR(checkInTime)";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, serviceName);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    WaitTrend t = new WaitTrend();
+                    int hr = rs.getInt("hr");
+                    String label = hr == 0 ? "12am" : hr < 12 ? hr + "am" : hr == 12 ? "12pm" : (hr - 12) + "pm";
+                    t.setLabel(label);
+                    double avg = rs.getDouble("avgWait");
+                    t.setAvgWait(avg);
+                    t.setTotalCheckIns(rs.getInt("total"));
+                    t.setCrowdLevel(avg < 50 ? "Low" : avg < 150 ? "Medium" : "High");
+                    trends.add(t);
+                }
+            }
+        }
+        return trends;
+    }
+
     public List<Service> getAssignedServices(int staffId) throws SQLException {
         List<Service> services = new ArrayList<>();
 
@@ -299,60 +348,6 @@ public class ServiceDao {
         int displayHour = peakHour % 12 == 0 ? 12 : peakHour % 12;
         return "Peak expected around " + displayHour + period;
     }
-
-    public List<WaitTrend> getAvgWaitByDay(String serviceName) throws SQLException
-    {
-        String sql = "SELECT DAYNAME(checkInTime) as day, DAYOFWEEK(checkInTime) as dayNum, " +
-                     "AVG(duration) as avgWait FROM CheckIn " +
-                     "WHERE serviceName = ? AND duration IS NOT NULL " +
-                     "GROUP BY DAYOFWEEK(checkInTime), DAYNAME(checkInTime) " +
-                     "ORDER BY DAYOFWEEK(checkInTime)";
-
-        List<WaitTrend> trends = new ArrayList<>();
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, serviceName);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    WaitTrend t = new WaitTrend();
-                    t.setLabel(rs.getString("day"));
-                    t.setAvgWait(rs.getDouble("avgWait"));
-                    t.setCrowdLevel(rs.getDouble("avgWait") < 50 ? "Low" :
-                            rs.getDouble("avgWait") < 150 ? "Medium" : "High");
-                    trends.add(t);
-                }
-            }
-        }
-        return trends;
-    }
-
-    public List<WaitTrend> getAvgWaitByHour(String serviceName) throws
-            SQLException {
-        String sql = "SELECT HOUR(checkInTime) as hour, AVG(duration) as avgWait FROM CheckIn " +
-                     "WHERE serviceName = ? AND duration IS NOT NULL " +
-                     "GROUP BY HOUR(checkInTime) ORDER BY HOUR(checkInTime)";
-
-        List<WaitTrend> trends = new ArrayList<>();
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, serviceName);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    WaitTrend t = new WaitTrend();
-                    int hour = rs.getInt("hour");
-                    String period = hour < 12 ? "am" : "pm";
-                    int display = hour % 12 == 0 ? 12 : hour % 12;
-                    t.setLabel(display + period);
-                    t.setAvgWait(rs.getDouble("avgWait"));
-                    t.setCrowdLevel(rs.getDouble("avgWait") < 50 ? "Low" :
-                            rs.getDouble("avgWait") < 150 ? "Medium" : "High");
-                    trends.add(t);
-                }
-            }
-        }
-        return trends;
-    }
-
 
     private Service makeService(Connection conn, ResultSet rs) throws SQLException {
         Service service = new Service();

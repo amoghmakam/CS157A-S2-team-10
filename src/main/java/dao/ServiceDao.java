@@ -300,6 +300,60 @@ public class ServiceDao {
         return "Peak expected around " + displayHour + period;
     }
 
+    public List<WaitTrend> getAvgWaitByDay(String serviceName) throws SQLException
+    {
+        String sql = "SELECT DAYNAME(checkInTime) as day, DAYOFWEEK(checkInTime) as dayNum, " +
+                     "AVG(duration) as avgWait FROM CheckIn " +
+                     "WHERE serviceName = ? AND duration IS NOT NULL " +
+                     "GROUP BY DAYOFWEEK(checkInTime), DAYNAME(checkInTime) " +
+                     "ORDER BY DAYOFWEEK(checkInTime)";
+
+        List<WaitTrend> trends = new ArrayList<>();
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, serviceName);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    WaitTrend t = new WaitTrend();
+                    t.setLabel(rs.getString("day"));
+                    t.setAvgWait(rs.getDouble("avgWait"));
+                    t.setCrowdLevel(rs.getDouble("avgWait") < 50 ? "Low" :
+                            rs.getDouble("avgWait") < 150 ? "Medium" : "High");
+                    trends.add(t);
+                }
+            }
+        }
+        return trends;
+    }
+
+    public List<WaitTrend> getAvgWaitByHour(String serviceName) throws
+            SQLException {
+        String sql = "SELECT HOUR(checkInTime) as hour, AVG(duration) as avgWait FROM CheckIn " +
+                     "WHERE serviceName = ? AND duration IS NOT NULL " +
+                     "GROUP BY HOUR(checkInTime) ORDER BY HOUR(checkInTime)";
+
+        List<WaitTrend> trends = new ArrayList<>();
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, serviceName);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    WaitTrend t = new WaitTrend();
+                    int hour = rs.getInt("hour");
+                    String period = hour < 12 ? "am" : "pm";
+                    int display = hour % 12 == 0 ? 12 : hour % 12;
+                    t.setLabel(display + period);
+                    t.setAvgWait(rs.getDouble("avgWait"));
+                    t.setCrowdLevel(rs.getDouble("avgWait") < 50 ? "Low" :
+                            rs.getDouble("avgWait") < 150 ? "Medium" : "High");
+                    trends.add(t);
+                }
+            }
+        }
+        return trends;
+    }
+
+
     private Service makeService(Connection conn, ResultSet rs) throws SQLException {
         Service service = new Service();
         service.setServiceName(rs.getString("serviceName"));

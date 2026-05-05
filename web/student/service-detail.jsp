@@ -264,30 +264,74 @@
 
     <div class="panel">
         <h3>Historical Trends</h3>
-        <% if (trends != null && !trends.isEmpty()) { %>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Time Slot</th>
-                        <th>Average Wait</th>
-                        <th>Total Check-Ins</th>
-                        <th>Crowd Level</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% for (WaitTrend t : trends) { %>
-                    <tr>
-                        <td><%= t.getLabel() %></td>
-                        <td><%= t.getAvgWait() %> min</td>
-                        <td><%= t.getTotalCheckIns() %></td>
-                        <td><%= t.getCrowdLevel() %></td>
-                    </tr>
-                    <% } %>
-                </tbody>
-            </table>
-        <% } else { %>
-            <p class="empty-note">No historical trend records are available yet.</p>
-        <% } %>
+
+        <p style="font-size:14px; color:#555; margin-bottom:16px;">Average wait time by day of the week</p>
+        <div style="display:flex; gap:6px; margin-bottom:24px;">
+            <%
+                List<WaitTrend> dayTrends = (List<WaitTrend>) request.getAttribute("dayTrends");
+                String[] allDays = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
+                java.util.Map<String,WaitTrend> dayMap = new java.util.HashMap<>();
+                if (dayTrends != null) {
+                    for (WaitTrend t : dayTrends) dayMap.put(t.getLabel(), t);
+                }
+                java.util.Set<String> openDays = new java.util.HashSet<>();
+                if (hours != null) {
+                    for (ServiceHour h : hours) {
+                        if (!h.isClosed()) openDays.add(h.getDayOfWeek());
+                    }
+                }
+                for (String day : allDays) {
+                    WaitTrend t = dayMap.get(day);
+                    String color = "#ccc";
+                    String tooltip = day + ": No data";
+                    if (!openDays.contains(day)) {
+                        color = "#666";
+                        tooltip = day + ": Closed";
+                    } else if (t != null) {
+                        color = "Low".equals(t.getCrowdLevel()) ? "#28a745" : "Medium".equals(t.getCrowdLevel()) ? "#ffc107" : "#dc3545";
+                        tooltip = day + ": " + String.format("%.1f", t.getAvgWait()) + " min avg";
+                    }
+            %>
+            <div title="<%= tooltip %>" style="flex:1; height:40px; background:<%= color %>; border-radius:6px;
+                 display:flex; align-items:flex-end; justify-content:center; padding-bottom:4px;">
+                <span style="font-size:10px; color:white; font-weight:bold;"><%= day.substring(0,2) %></span>
+            </div>
+            <% } %>
+        </div>
+
+        <p style="font-size:14px; color:#555; margin-bottom:16px;">Average wait time by hour of day</p>
+        <div style="display:flex; gap:3px; flex-wrap:wrap;">
+            <%
+                List<WaitTrend> hourTrends = (List<WaitTrend>) request.getAttribute("hourTrends");
+                java.util.Map<String,WaitTrend> hourMap = new java.util.HashMap<>();
+                if (hourTrends != null) {
+                    for (WaitTrend t : hourTrends) hourMap.put(t.getLabel(), t);
+                }
+                String[] allHours = {"12am","1am","2am","3am","4am","5am","6am","7am","8am","9am","10am","11am",
+                                     "12pm","1pm","2pm","3pm","4pm","5pm","6pm","7pm","8pm","9pm","10pm","11pm"};
+                for (String hour : allHours) {
+                    WaitTrend t = hourMap.get(hour);
+                    String color2 = "#e0e0e0";
+                    String tooltip2 = hour + ": No data";
+                    if (t != null) {
+                        color2 = "Low".equals(t.getCrowdLevel()) ? "#28a745" : "Medium".equals(t.getCrowdLevel()) ? "#ffc107" : "#dc3545";
+                        tooltip2 = hour + ": " + String.format("%.1f", t.getAvgWait()) + " min avg";
+                    }
+            %>
+            <div title="<%= tooltip2 %>" style="width:32px; height:32px; background:<%= color2 %>; border-radius:4px;
+                 display:flex; align-items:center; justify-content:center;">
+                <span style="font-size:9px; color:#333;"><%= hour %></span>
+            </div>
+            <% } %>
+        </div>
+
+        <div style="display:flex; gap:16px; margin-top:16px; font-size:13px;">
+            <span><span style="display:inline-block;width:12px;height:12px;background:#28a745;border-radius:3px;"></span> Low</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:#ffc107;border-radius:3px;"></span> Medium</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:#dc3545;border-radius:3px;"></span> High</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:#666;border-radius:3px;"></span> Closed</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:#ccc;border-radius:3px;"></span> No data</span>
+        </div>
     </div>
 </div>
 

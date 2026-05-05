@@ -264,4 +264,22 @@ The application keeps relationship tables synchronized during runtime actions:
 - Added demo accounts, setup scripts, database verification scripts, documentation updates, and final deployment cleanup.
 
 ### Andrea Tapia-Sandoval
--
+- Built and styled the homepage and initial project structure, including login
+   and signup card views.                                                       
+  - Added 5-minute session timeout to the web application.                      
+  - Fixed the student dashboard checkout button placement and active service    
+  display in the Account Status card.                                           
+  - Implemented category filter UI on the home page and student dashboard.      
+  - Added audit log display panel to the admin dashboard.                       
+  - Built the 24-hour crowd trend prediction label on service cards showing
+  expected peak times.                                                          
+  - Created historical wait-time bar visualizations by day of week and hour of
+  day on the service detail page, with color-coded crowd levels and a           
+  best-time-to-visit recommendation.
+  - Implemented per-service operational analytics panels on the staff dashboard,
+   showing day bars, hour bars, and event volume charts for each assigned       
+  service.
+  - Implemented per-service operational analytics panels on the admin dashboard 
+  for all services.                                                             
+  - Managed code integration by reviewing and merging pull requests throughout
+  the project.              

@@ -10,7 +10,9 @@ On a new machine, first make sure these are installed:
 
 Test MySQL login:
 
+```
 mysql -u root -p
+```
 
 Then exit MySQL:
 
@@ -20,16 +22,18 @@ exit;
 
 Clone the project:
 
+```
 cd ~/Downloads
 git clone https://github.com/amoghmakam/CS157A-S2-team-10.git campusqueue
 cd campusqueue
+```
 
 Important:
 Adjust TOMCAT_HOME to the Tomcat 10 directory on the machine.
 Set DB_PASSWORD to the local MySQL root password.
 
 To start, run:
-
+```
 cd ~/Downloads/campusqueue
 git pull origin main
 git status
@@ -42,7 +46,9 @@ export DB_URL="jdbc:mysql://localhost:3306/team10?serverTimezone=UTC"
 
 sh scripts/setup_db_mac.sh
 sh scripts/build_deploy_mac.sh
+```
 
+Go to:
 http://localhost:8080/CampusQueue/HomeServlet 
 
 *note: only run setup_db_mac.sh if you want fresh database, the cmd resets the db. Make sure git status says “working tree clean” before starting.

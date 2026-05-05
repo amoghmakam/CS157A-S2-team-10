@@ -262,6 +262,7 @@
             margin-top: 40px;
         }
     </style>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
 </head>
 <body>
 

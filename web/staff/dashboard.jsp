@@ -63,6 +63,7 @@
         .empty-note { color: #777; font-size: 14px; }
         footer { text-align: center; padding: 20px; color: #777; font-size: 13px; margin-top: 30px; }
     </style>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
 </head>
 <body>
 

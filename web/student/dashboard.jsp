@@ -294,6 +294,7 @@
             margin-top: 30px;
         }
     </style>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
 </head>
 <body>
 

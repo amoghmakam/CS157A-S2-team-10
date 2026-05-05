@@ -57,6 +57,7 @@
         .empty-note { color: #777; font-size: 14px; }
         footer { text-align: center; padding: 20px; color: #777; font-size: 13px; margin-top: 30px; }
     </style>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
 </head>
 <body>
 
@@ -87,49 +88,84 @@
     <div class="panel">
         <h3>System Analytics</h3>
 
-    <p><strong>Total Services:</strong> <%= analytics.getTotalServices() %></p>
-    <p><strong>Open Services:</strong> <%= analytics.getOpenServices() %></p>
-    <p><strong>Total Users:</strong> <%= analytics.getTotalUsers() %></p>
-    <p><strong>Active Check-ins:</strong> <%= analytics.getActiveCheckIns() %></p>
-    <p><strong>Completed Visits:</strong> <%= analytics.getTotalCompletedVisits() %></p>
-    <p><strong>Average Visit Duration:</strong> <%= String.format("%.1f", analytics.getAverageVisitMinutes()) %> minutes</p>
-    <p><strong>Flagged Records:</strong> <%= analytics.getFlaggedRecords() %></p>
+    <div class="analytics-summary">
+        <div class="metric-card">
+            <span class="metric-label">Total Services</span>
+            <span class="metric-value"><%= analytics.getTotalServices() %></span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">Open Services</span>
+            <span class="metric-value"><%= analytics.getOpenServices() %></span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">Total Users</span>
+            <span class="metric-value"><%= analytics.getTotalUsers() %></span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">Active Check-ins</span>
+            <span class="metric-value"><%= analytics.getActiveCheckIns() %></span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">Completed Visits</span>
+            <span class="metric-value"><%= analytics.getTotalCompletedVisits() %></span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">Average Visit Duration</span>
+            <span class="metric-value small"><%= String.format("%.1f", analytics.getAverageVisitMinutes()) %> min</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">Flagged Records</span>
+            <span class="metric-value"><%= analytics.getFlaggedRecords() %></span>
+        </div>
+    </div>
 
-    <h3>Busiest Services</h3>
-    <table border="1">
-        <tr>
-            <th>Service</th>
-            <th>Total Visits</th>
-            <th>Active Now</th>
-            <th>Avg Duration</th>
-        </tr>
+    <div class="section-title">Busiest Services</div>
+    <p class="section-subtitle">Services ranked by total visit activity.</p>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Total Visits</th>
+                    <th>Active Now</th>
+                    <th>Avg Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (ServiceAnalyticsRow row : analytics.getBusiestServices()) { %>
+                    <tr>
+                        <td><%= row.getServiceName() %></td>
+                        <td><%= row.getTotalVisits() %></td>
+                        <td><%= row.getActiveVisits() %></td>
+                        <td><%= String.format("%.1f", row.getAverageDuration()) %> min</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
 
-        <% for (ServiceAnalyticsRow row : analytics.getBusiestServices()) { %>
-            <tr>
-                <td><%= row.getServiceName() %></td>
-                <td><%= row.getTotalVisits() %></td>
-                <td><%= row.getActiveVisits() %></td>
-                <td><%= String.format("%.1f", row.getAverageDuration()) %> min</td>
-            </tr>
-        <% } %>
-    </table>
-
-    <h3>Check-in Volume by Hour</h3>
-    <table border="1">
-        <tr>
-            <th>Hour</th>
-            <th>Check-ins</th>
-            <th>Check-outs</th>
-        </tr>
-
-        <% for (HourlyVolumeRow row : analytics.getHourlyVolume()) { %>
-            <tr>
-                <td><%= row.getHour() %>:00</td>
-                <td><%= row.getCheckIns() %></td>
-                <td><%= row.getCheckOuts() %></td>
-            </tr>
-        <% } %>
-    </table>
+    <div class="section-title">Check-in Volume by Hour</div>
+    <p class="section-subtitle">Hourly check-in and check-out activity across campus services.</p>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Hour</th>
+                    <th>Check-ins</th>
+                    <th>Check-outs</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (HourlyVolumeRow row : analytics.getHourlyVolume()) { %>
+                    <tr>
+                        <td><%= row.getHour() %>:00</td>
+                        <td><%= row.getCheckIns() %></td>
+                        <td><%= row.getCheckOuts() %></td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
 </div>
 <% } %>
     
@@ -341,8 +377,8 @@
                     int maxVol = 1;
                     if (hList != null) { for (WaitTrend t : hList) { if (t.getTotalCheckIns() > maxVol) maxVol = t.getTotalCheckIns(); } }
         %>
-        <div style="border:1px solid #e6eef7; border-radius:8px; padding:16px; margin-bottom:18px;">
-            <strong style="display:block; font-size:16px; color:#003366; margin-bottom:14px;"><%= svcName %></strong>
+        <div class="analytics-service-card">
+            <strong class="analytics-service-title"><%= svcName %></strong>
 
             <span style="display:block; font-size:12px; color:#555; margin-bottom:6px;">Avg Wait by Day</span>
             <div style="display:flex; gap:4px; margin-bottom:14px;">

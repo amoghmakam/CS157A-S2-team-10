@@ -1,12 +1,12 @@
 #!/bin/sh
 
 # CampusQueue build/deploy script for macOS/Linux with Tomcat 10.
-# Default app name is CampusQueueFork so it can run separately from other copies.
+# Default app name is CampusQueue so it can run separately from other copies.
 
 set -e
 
 TOMCAT_HOME="${TOMCAT_HOME:-/Users/oops/Downloads/tomcat10}"
-APP_NAME="${APP_NAME:-CampusQueueFork}"
+APP_NAME="${APP_NAME:-CampusQueue}"
 
 # The MySQL connector can be either inside the project or inside Tomcat's lib folder.
 # This makes the script work with both common setups.

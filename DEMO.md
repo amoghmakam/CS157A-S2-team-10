@@ -45,7 +45,7 @@ export DB_URL="jdbc:mysql://localhost:3306/team10?serverTimezone=UTC"
 sh scripts/setup_db_mac.sh
 sh scripts/build_deploy_mac.sh
 
-http://localhost:8080/CampusQueueFork/HomeServlet 
+http://localhost:8080/CampusQueue/HomeServlet 
 
 *note: only run setup_db_mac.sh if you want fresh database, the cmd resets the db. Make sure git status says “working tree clean” before starting.
 

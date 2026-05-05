@@ -47,12 +47,12 @@ mysql -u root -p team10 < sql/test_basic_features.sql
 sh scripts/build_deploy_mac.sh
 ```
 
-The script compiles Java files, deploys the app as `CampusQueueFork`, clears old Tomcat work files, and restarts Tomcat.
+The script compiles Java files, deploys the app as `CampusQueue`, clears old Tomcat work files, and restarts Tomcat.
 
 ## 5. Open the app
 
 ```text
-http://localhost:8080/CampusQueueFork/HomeServlet
+http://localhost:8080/CampusQueue/HomeServlet
 ```
 
 ## 6. Recommended demo accounts

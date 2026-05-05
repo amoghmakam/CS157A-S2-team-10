@@ -36,7 +36,7 @@ This script compiles and deploys the app to Tomcat 10. It:
 1. Finds Tomcat using `TOMCAT_HOME`.
 2. Finds the MySQL connector jar either in the project or Tomcat `lib` folder.
 3. Compiles Java source files into `build/classes`.
-4. Deploys the app as `CampusQueueFork`.
+4. Deploys the app as `CampusQueue`.
 5. Copies compiled classes into `WEB-INF/classes`.
 6. Copies the MySQL connector into `WEB-INF/lib`.
 7. Restarts Tomcat.
@@ -133,5 +133,5 @@ sh scripts/build_deploy_mac.sh
 Then open:
 
 ```text
-http://localhost:8080/CampusQueueFork/HomeServlet
+http://localhost:8080/CampusQueue/HomeServlet
 ```

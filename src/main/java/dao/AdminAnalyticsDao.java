@@ -85,6 +85,17 @@ public class AdminAnalyticsDao {
     private List<HourlyVolumeRow> getHourlyVolume(Connection conn) throws SQLException {
         List<HourlyVolumeRow> rows = new ArrayList<>();
 
+        // COALESCE -> convert missing values into 0s, prevent DB from returning NULL
+        // LEFT JOIN -> query must return all 24 hours, even if some hours have zero check-ins/check-outs
+        // 0  | 0 check-ins
+        // 1  | 0 check-ins
+        // 2  | 0 check-ins
+        // ...
+        // 9  | 5 check-ins
+        // 10 | 3 check-ins
+        // ...
+        // 23 | 0 check-ins
+
         String sql =
             "SELECT h.hourValue, " +
             "COALESCE(ci.checkIns, 0) AS checkIns, " +

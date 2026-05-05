@@ -336,17 +336,14 @@
             <div class="location">Location: <%= s.getLocation() %></div>
 
             <% if (userId == null) { %>
-                <div class="wait-locked">Login to view wait time</div>
+            <div class="wait-locked">Login to view wait time</div>
             <% } else { %>
-                <div class="wait-time">Predicted wait: <strong><%= String.format("%.1f", s.getPredictedWait()) %> min</strong></div>
+            <div class="wait-time">Predicted wait: <strong><%= String.format("%.1f",
+                    s.getPredictedWait()) %> min</strong></div>
+            <div class="wait-time">24h trend: <strong><%= s.getTrendLabel()
+            %></strong></div>
             <% } %>
 
-            <% if (userId != null && "STUDENT".equals(role)) { %>
-                <a class="dashboard-link"
-                   href="<%= request.getContextPath() %>/ServiceDetailServlet?serviceName=<%= java.net.URLEncoder.encode(s.getServiceName(), "UTF-8") %>">
-                    View details
-                </a>
-            <% } %>
         </div>
     <%  }
        } else { %>

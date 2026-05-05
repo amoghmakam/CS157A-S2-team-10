@@ -12,6 +12,16 @@ public class Service {
     private double predictedWait;
     private String crowdLevel;
 
+    public String getTrendLabel() {
+        return trendLabel;
+    }
+
+    public void setTrendLabel(String trendLabel) {
+        this.trendLabel = trendLabel;
+    }
+
+    private String trendLabel;
+
     public Service() {
     }
 

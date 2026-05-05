@@ -269,6 +269,37 @@ public class ServiceDao {
         }
     }
 
+    private String getCrowdTrendNext24h(Connection conn, String serviceName)
+            throws SQLException {
+        String sql = "SELECT recordHour, AVG(avgWaitTime) as avgWait " +
+                "FROM WaitTimeHistory WHERE serviceName = ? " +
+                "GROUP BY recordHour ORDER BY recordHour";
+
+        int currentHour = java.time.LocalTime.now().getHour();
+        double peakWait = -1;
+        int peakHour = -1;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, serviceName);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int hour = rs.getInt("recordHour");
+                    double wait = rs.getDouble("avgWait");
+                    int hoursFromNow = (hour - currentHour + 24) % 24;
+                    if (hoursFromNow <= 24 && wait > peakWait) {
+                        peakWait = wait;
+                        peakHour = hour;
+                    }
+                }
+            }
+        }
+
+        if (peakHour == -1) return "No trend data available";
+        String period = peakHour < 12 ? "am" : "pm";
+        int displayHour = peakHour % 12 == 0 ? 12 : peakHour % 12;
+        return "Peak expected around " + displayHour + period;
+    }
+
     private Service makeService(Connection conn, ResultSet rs) throws SQLException {
         Service service = new Service();
         service.setServiceName(rs.getString("serviceName"));
@@ -283,6 +314,7 @@ public class ServiceDao {
         service.setActiveCount(activeCount);
         service.setCrowdLevel(calculateCrowd(activeCount, service.getCapacity()));
         service.setPredictedWait(calculatePredictedWait(conn, service.getServiceName(), activeCount, service.getCapacity()));
+        service.setTrendLabel(getCrowdTrendNext24h(conn, service.getServiceName())); // For 24 hour trend
         return service;
     }
 

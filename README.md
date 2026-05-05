@@ -250,8 +250,18 @@ The application keeps relationship tables synchronized during runtime actions:
 
 ---
 
-## Team Members
+## Team Contributions
 
-- Amogh Makam
-- Suparn Posina
-- Andrea Tapia-Sandoval
+### Amogh Makam
+- 
+
+### Suparn Posina
+- Contributed to the CampusQueue project idea, planning, and database design.
+- Created ERD diagram for overall application functionality.
+- Implemented and finalized major full-stack functionality for the CampusQueue web application.
+- Worked on Java Servlet, JSP, DAO, model, utility, SQL, and Tomcat/MySQL integration.
+- Added role-based workflows for students, staff, and administrators.
+- Added demo accounts, setup scripts, database verification scripts, documentation updates, and final deployment cleanup.
+
+### Andrea Tapia-Sandoval
+-

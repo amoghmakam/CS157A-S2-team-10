@@ -20,7 +20,7 @@
 </head>
 <body>
 
-<nav>
+<nav class="top-nav">
     <h1>CampusQueue</h1>
     <div class="nav-right">
         <span>Hi, <%= userName %></span>
@@ -29,10 +29,10 @@
     </div>
 </nav>
 
-<div class="hero">
+<section class="hero">
     <h2>Staff Service Details</h2>
     <p>Review assigned service details, hours, wait trends, and operational information</p>
-</div>
+</section>
 
 <div class="page">
     <% if (service == null) { %>
@@ -203,6 +203,6 @@
     <% } %>
 </div>
 
-<footer>CampusQueue &mdash; SJSU CS157A Section 2, Team 10</footer>
+<footer class="site-footer">CampusQueue &mdash; SJSU CS157A Section 2, Team 10</footer>
 </body>
 </html>

@@ -68,7 +68,9 @@ pass123
 Demo admin auth:
 
 admin.demo@sjsu.edu
-pass123  Demo flow:
+pass123  
+
+Demo flow:
 
 1. Student
 - Log in with student.demo@sjsu.edu / pass123

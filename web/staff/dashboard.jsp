@@ -108,11 +108,6 @@
                     <div class="location">Location: <%= s.getLocation() %></div>
                     <div class="wait">Predicted Wait: <strong><%= String.format("%.1f", s.getPredictedWait()) %> min</strong></div>
 
-                    <a class="secondary-link"
-                       href="<%= request.getContextPath() %>/ServiceDetailServlet?serviceName=<%= java.net.URLEncoder.encode(s.getServiceName(), "UTF-8") %>">
-                        View Details
-                    </a>
-
                     <!-- Staff can update only capacity/status for assigned services. Server-side checks also verify assignment. -->
                     <form action="<%= request.getContextPath() %>/UpdateServiceServlet" method="post">
                         <input type="hidden" name="serviceName" value="<%= s.getServiceName() %>">

@@ -7,11 +7,13 @@
 <%@ page import="model.AdminAnalytics" %>
 <%@ page import="model.ServiceAnalyticsRow" %>
 <%@ page import="model.HourlyVolumeRow" %>
+<%@ page import="model.User" %>
 <%
     // Data is prepared by AdminDashboardServlet before forwarding to this JSP.
     List<Service> services = (List<Service>) request.getAttribute("services");
     List<AuditLog> auditLogs = (List<AuditLog>) request.getAttribute("auditLogs");
     List<String[]> categories = (List<String[]>) request.getAttribute("categories");
+    List<User> allUsers = (List<User>) request.getAttribute("allUsers");
 
     String flashMessage = (String) session.getAttribute("flashMessage");
     String flashError = (String) session.getAttribute("flashError");
@@ -336,6 +338,49 @@
             </div>
             <button type="submit">Assign Staff</button>
         </form>
+    </div>
+
+
+    <div class="panel">
+        <h3>All Users</h3>
+        <p class="empty-note" style="margin-bottom: 12px;">View every account, role, account status, and staff service assignment.</p>
+
+        <% if (allUsers != null && !allUsers.isEmpty()) { %>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Staff Assignment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (User u : allUsers) { %>
+                        <tr>
+                            <td><%= u.getUserId() %></td>
+                            <td><%= u.getFirstName() %> <%= u.getLastName() %></td>
+                            <td><%= u.getEmail() %></td>
+                            <td>
+                                <span class="status-pill role-pill"><%= u.getRole() %></span>
+                            </td>
+                            <td>
+                                <span class="status-pill <%= "SUSPENDED".equalsIgnoreCase(u.getAccountStatus()) ? "status-suspended" : "status-active" %>">
+                                    <%= u.getAccountStatus() %>
+                                </span>
+                            </td>
+                            <td><%= u.getStaffAssignments() == null ? "N/A" : u.getStaffAssignments() %></td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <p class="empty-note">No users were found.</p>
+        <% } %>
     </div>
 
     <div class="panel">

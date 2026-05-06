@@ -400,3 +400,32 @@ footer,
     margin: 32px auto 0 !important;
     color: var(--muted) !important;
 }
+
+/* Admin user list badges */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 86px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.status-active {
+    background: rgba(40, 167, 69, 0.12);
+    color: #1f7a39;
+}
+
+.status-suspended {
+    background: rgba(220, 53, 69, 0.12);
+    color: #b4232f;
+}
+
+.role-pill {
+    background: rgba(0, 51, 102, 0.10);
+    color: #003366;
+}

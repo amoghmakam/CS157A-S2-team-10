@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDao {
 
@@ -134,6 +136,59 @@ public class UserDao {
                 conn.setAutoCommit(true);
             }
         }
+    }
+
+
+    /**
+     * Returns every user in the application with role, account status, and staff assignment summary.
+     * Admin dashboard uses this for user moderation and verification.
+     */
+    public List<User> getAllUsersWithRolesAndAssignments() throws SQLException {
+        List<User> users = new ArrayList<>();
+
+        String sql =
+            "SELECT " +
+            "u.userID, u.firstName, u.lastName, u.email, " +
+            "COALESCE(u.accountStatus, 'ACTIVE') AS accountStatus, " +
+            "CASE " +
+            "  WHEN a.adminID IS NOT NULL THEN 'ADMIN' " +
+            "  WHEN sf.staffID IS NOT NULL THEN 'STAFF' " +
+            "  WHEN st.studentID IS NOT NULL THEN 'STUDENT' " +
+            "  ELSE 'GUEST' " +
+            "END AS roleName, " +
+            "CASE " +
+            "  WHEN sf.staffID IS NULL THEN 'N/A' " +
+            "  WHEN COUNT(sa.assignmentID) = 0 THEN 'Unassigned' " +
+            "  ELSE GROUP_CONCAT(sa.serviceName ORDER BY sa.serviceName SEPARATOR ', ') " +
+            "END AS staffAssignments " +
+            "FROM Users u " +
+            "LEFT JOIN Student st ON u.userID = st.studentID " +
+            "LEFT JOIN Staff sf ON u.userID = sf.staffID " +
+            "LEFT JOIN Admin a ON u.userID = a.adminID " +
+            "LEFT JOIN StaffAssignment sa ON sf.staffID = sa.staffID " +
+            "GROUP BY u.userID, u.firstName, u.lastName, u.email, u.accountStatus, " +
+            "         st.studentID, sf.staffID, a.adminID " +
+            "ORDER BY u.userID";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("userID"));
+                user.setFirstName(rs.getString("firstName"));
+                user.setLastName(rs.getString("lastName"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword("[protected]");
+                user.setAccountStatus(rs.getString("accountStatus"));
+                user.setRole(rs.getString("roleName"));
+                user.setStaffAssignments(rs.getString("staffAssignments"));
+                users.add(user);
+            }
+        }
+
+        return users;
     }
 
     public void updateAccountStatus(int userId, String accountStatus) throws SQLException {

@@ -3,6 +3,7 @@ package servlet;
 import dao.AdminAnalyticsDao;
 import dao.AdminDao;
 import dao.ServiceDao;
+import dao.UserDao;
 import model.Service;
 import model.WaitTrend;
 import jakarta.servlet.ServletException;
@@ -21,6 +22,7 @@ public class AdminDashboardServlet extends HttpServlet {
     private final ServiceDao serviceDao = new ServiceDao();
     private final AdminDao adminDao = new AdminDao();
     private final AdminAnalyticsDao adminAnalyticsDao = new AdminAnalyticsDao();
+    private final UserDao userDao = new UserDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -43,6 +45,7 @@ public class AdminDashboardServlet extends HttpServlet {
             request.setAttribute("hourAnalytics", hourAnalytics);
 
             request.setAttribute("analytics", adminAnalyticsDao.getAdminAnalytics());
+            request.setAttribute("allUsers", userDao.getAllUsersWithRolesAndAssignments());
 
             request.getRequestDispatcher("/admin/dashboard.jsp").forward(request, response);
         } catch (Exception e) {

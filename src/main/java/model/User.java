@@ -12,6 +12,7 @@ public class User {
     private String password;
     private String role;
     private String accountStatus;
+    private String staffAssignments;
 
     public User() {
     }
@@ -70,5 +71,12 @@ public class User {
 
     public void setAccountStatus(String accountStatus) {
         this.accountStatus = accountStatus;
+    }
+    public String getStaffAssignments() {
+        return staffAssignments;
+    }
+
+    public void setStaffAssignments(String staffAssignments) {
+        this.staffAssignments = staffAssignments;
     }
 }

@@ -22,6 +22,7 @@ import java.io.IOException;
         "/CheckInServlet",
         "/CheckOutServlet",
         "/StaffDashboardServlet",
+        "/StaffServiceDetailServlet",
         "/UpdateServiceServlet",
         "/ValidationServlet",
         "/AdminDashboardServlet",
@@ -47,7 +48,7 @@ public class AuthFilter implements Filter {
         String uri = req.getRequestURI();
         String role = (String) session.getAttribute("role");
 
-        if ((uri.contains("StaffDashboardServlet") || uri.contains("UpdateServiceServlet") || uri.contains("ValidationServlet"))
+        if ((uri.contains("StaffDashboardServlet") || uri.contains("StaffServiceDetailServlet") || uri.contains("UpdateServiceServlet") || uri.contains("ValidationServlet"))
                 && !("STAFF".equals(role) || "ADMIN".equals(role))) {
             resp.sendRedirect(req.getContextPath() + "/HomeServlet");
             return;

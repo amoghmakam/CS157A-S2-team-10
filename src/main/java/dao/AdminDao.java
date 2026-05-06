@@ -69,6 +69,13 @@ public class AdminDao {
         }
     }
 
+
+    /**
+     *This method fetches all audit log records from the database and returns them
+     * as a Java list.
+     * @return - Java  list
+     * @throws SQLException
+     */
     public List<AuditLog> getAuditLogs() throws SQLException {
         String sql = "SELECT auditID, userID, actionType, actionDescription, actionTime FROM AuditLog ORDER BY actionTime DESC";
         List<AuditLog> logs = new ArrayList<>();

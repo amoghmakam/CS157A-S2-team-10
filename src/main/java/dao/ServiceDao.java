@@ -111,8 +111,22 @@ public class ServiceDao {
         return trends;
     }
 
+    /**
+     * This method calculates average wait times broken down by day of the week for a specific service.
+     * @param serviceName
+     * @return
+     * @throws SQLException
+     */
     public List<WaitTrend> getAvgWaitByDay(String serviceName) throws SQLException {
         List<WaitTrend> trends = new ArrayList<>();
+        /**
+         * SQL query — for each day of the week, it computes:
+         *     - dayName — the day's name (Monday, Tuesday, etc.)
+         *     - avgWait — average duration across all check-ins that day
+         *     - total — how many check-ins happened that day
+         *     - Only includes rows where duration IS NOT NULL (completed check-ins with a known wait)
+         *     - Groups and orders by DAYOFWEEK(...) so results come back Mon→Sun in calendar order
+         */
         String sql = "SELECT DAYNAME(checkInTime) AS dayName, AVG(duration) AS avgWait, COUNT(*) AS total " +
                      "FROM CheckIn WHERE serviceName = ? AND duration IS NOT NULL " +
                      "GROUP BY DAYOFWEEK(checkInTime), DAYNAME(checkInTime) " +
@@ -160,8 +174,20 @@ public class ServiceDao {
         return trends;
     }
 
+    /**
+     * Retrieves average wait times and check-in counts grouped by hour of the day (0-23)
+     * for a specific service, ordered chronologically.
+     * Hour labels are formatted in 12-hour time (e.g. 0 -> "12am", 13 -> "1pm").
+     * Crowd level is derived from the average wait: Low (<50), Medium (50-149), High (>=150).
+     *
+     * @param serviceName the name of the service to filter check-ins by
+     * @return a list of WaitTrend objects, one per hour that has recorded check-ins
+     * @throws SQLException if a database access error occurs
+     */
+
     public List<WaitTrend> getAvgWaitByDayForStaff(int staffId) throws SQLException {
         List<WaitTrend> trends = new ArrayList<>();
+        //extracts hour as a number 0–23
         String sql = "SELECT DAYNAME(c.checkInTime) AS dayName, AVG(c.duration) AS avgWait, COUNT(*) AS total " +
                      "FROM CheckIn c JOIN StaffAssignment sa ON c.serviceName = sa.serviceName " +
                      "WHERE sa.staffID = ? AND c.duration IS NOT NULL " +
@@ -184,7 +210,16 @@ public class ServiceDao {
         }
         return trends;
     }
-
+    /**
+     * Retrieves average wait times and check-in counts grouped by hour of the day
+     * for all services assigned to a specific staff member, ordered chronologically.
+     * Hour labels are formatted in 12-hour time (e.g. 0 -> "12am", 13 -> "1pm").
+     * Crowd level is derived from the average wait: Low (<50), Medium (50-149), High (>=150).
+     *
+     * @param staffId the ID of the staff member whose assigned services are queried
+     * @return a list of WaitTrend objects, one per hour that has recorded check-ins
+     * @throws SQLException if a database access error occurs
+     */
     public List<WaitTrend> getAvgWaitByHourForStaff(int staffId) throws SQLException {
         List<WaitTrend> trends = new ArrayList<>();
         String sql = "SELECT HOUR(c.checkInTime) AS hr, AVG(c.duration) AS avgWait, COUNT(*) AS total " +
@@ -432,6 +467,18 @@ public class ServiceDao {
         }
     }
 
+    /**
+     * Analyzes historical wait time data to predict the peak crowd hour
+     * within the next 24 hours for a specific service.
+     * Uses average wait times per hour from WaitTimeHistory to find
+     * the busiest upcoming hour, formatted as 12-hour time (e.g. "5pm").
+     *
+     * @param conn        an active database connection
+     * @param serviceName the name of the service to analyze
+     * @return a string describing the expected peak hour (e.g. "Peak expected around 5pm"),
+     *         or "No trend data available" if no historical data exists
+     * @throws SQLException if a database access error occurs
+     */
     private String getCrowdTrendNext24h(Connection conn, String serviceName)
             throws SQLException {
         String sql = "SELECT recordHour, AVG(avgWaitTime) as avgWait " +

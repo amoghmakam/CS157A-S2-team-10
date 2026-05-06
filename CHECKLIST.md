@@ -1,6 +1,6 @@
-# CampusQueue Grading Checklist
+# CampusQueue Checklist
 
-Use this checklist to verify the project before submission or demo.
+Use this checklist to verify the project.
 
 ## Build and Deployment
 

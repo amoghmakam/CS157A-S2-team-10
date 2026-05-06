@@ -185,3 +185,31 @@ SHOW INDEX FROM ServiceHours;
 SHOW INDEX FROM WaitTimeHistory;
 SHOW INDEX FROM ValidationLog;
 SHOW INDEX FROM AuditLog;
+
+-- ==========================================================
+-- Additional staff demo verification
+-- ==========================================================
+
+SELECT userID, firstName, lastName, email, accountStatus
+FROM Users
+WHERE userID IN (27, 29, 30, 31, 32, 33)
+ORDER BY userID;
+
+SELECT staffID, staffName, staffRole
+FROM Staff
+WHERE staffID IN (27, 29, 30, 31, 32, 33)
+ORDER BY staffID;
+
+SELECT sa.assignmentID, sa.staffID, u.email, sa.serviceName, sa.dateAssigned
+FROM StaffAssignment sa
+JOIN Users u ON sa.staffID = u.userID
+WHERE sa.staffID IN (27, 29, 30, 31, 32, 33)
+ORDER BY sa.staffID, sa.serviceName;
+
+SELECT s.staffID, u.email
+FROM Staff s
+JOIN Users u ON s.staffID = u.userID
+LEFT JOIN StaffAssignment sa ON s.staffID = sa.staffID
+WHERE s.staffID IN (27, 29, 30, 31, 32, 33)
+  AND sa.assignmentID IS NULL
+ORDER BY s.staffID;

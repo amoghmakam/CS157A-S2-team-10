@@ -191,6 +191,96 @@ public class UserDao {
         return users;
     }
 
+
+    /**
+     * Changes a non-admin user between STUDENT and STAFF.
+     *
+     * This is used by admins to promote a student account to staff or downgrade
+     * a staff account back to student. Admin accounts are protected so the demo
+     * admin cannot accidentally remove their own admin access.
+     */
+    public void changeUserRole(int userId, String targetRole) throws SQLException {
+        if (!"STUDENT".equals(targetRole) && !"STAFF".equals(targetRole)) {
+            throw new SQLException("Target role must be STUDENT or STAFF.");
+        }
+
+        String userSql = "SELECT firstName, lastName FROM Users WHERE userID = ?";
+        String insertStudent =
+                "INSERT INTO Student(studentID, major, grade) VALUES (?, 'Undeclared', 'N/A') " +
+                "ON DUPLICATE KEY UPDATE major = major, grade = grade";
+        String insertStaff =
+                "INSERT INTO Staff(staffID, staffName, staffRole) VALUES (?, ?, 'General Staff') " +
+                "ON DUPLICATE KEY UPDATE staffName = VALUES(staffName), staffRole = VALUES(staffRole)";
+        String upsertStudentIsA =
+                "INSERT INTO IsA(userID, studentID, staffID, adminID) VALUES (?, ?, NULL, NULL) " +
+                "ON DUPLICATE KEY UPDATE studentID = VALUES(studentID), staffID = NULL, adminID = NULL";
+        String upsertStaffIsA =
+                "INSERT INTO IsA(userID, studentID, staffID, adminID) VALUES (?, NULL, ?, NULL) " +
+                "ON DUPLICATE KEY UPDATE studentID = NULL, staffID = VALUES(staffID), adminID = NULL";
+        String deleteStaff = "DELETE FROM Staff WHERE staffID = ?";
+
+        try (Connection conn = DBUtil.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try {
+                if (existsInTable(conn, "Admin", "adminID", userId)) {
+                    throw new SQLException("Admin users cannot be changed to student or staff.");
+                }
+
+                String firstName;
+                String lastName;
+                try (PreparedStatement ps = conn.prepareStatement(userSql)) {
+                    ps.setInt(1, userId);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (!rs.next()) {
+                            throw new SQLException("User does not exist.");
+                        }
+                        firstName = rs.getString("firstName");
+                        lastName = rs.getString("lastName");
+                    }
+                }
+
+                if ("STAFF".equals(targetRole)) {
+                    try (PreparedStatement ps = conn.prepareStatement(insertStaff)) {
+                        ps.setInt(1, userId);
+                        ps.setString(2, firstName + " " + lastName);
+                        ps.executeUpdate();
+                    }
+
+                    try (PreparedStatement ps = conn.prepareStatement(upsertStaffIsA)) {
+                        ps.setInt(1, userId);
+                        ps.setInt(2, userId);
+                        ps.executeUpdate();
+                    }
+                } else {
+                    try (PreparedStatement ps = conn.prepareStatement(insertStudent)) {
+                        ps.setInt(1, userId);
+                        ps.executeUpdate();
+                    }
+
+                    try (PreparedStatement ps = conn.prepareStatement(upsertStudentIsA)) {
+                        ps.setInt(1, userId);
+                        ps.setInt(2, userId);
+                        ps.executeUpdate();
+                    }
+
+                    // Removing Staff also clears staff assignments through schema cascades.
+                    try (PreparedStatement ps = conn.prepareStatement(deleteStaff)) {
+                        ps.setInt(1, userId);
+                        ps.executeUpdate();
+                    }
+                }
+
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
+
     public void updateAccountStatus(int userId, String accountStatus) throws SQLException {
         String sql = "UPDATE Users SET accountStatus = ? WHERE userID = ?";
 

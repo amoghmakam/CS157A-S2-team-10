@@ -12,7 +12,7 @@ import java.io.IOException;
 
 /**
  * Admin-only servlet for simple user moderation.
- * Admins can mark an account ACTIVE or SUSPENDED.
+ * Admins can mark an account ACTIVE or SUSPENDED and can switch non-admin users between STUDENT and STAFF.
  */
 @WebServlet("/UserStatusServlet")
 public class UserStatusServlet extends HttpServlet {
@@ -26,15 +26,15 @@ public class UserStatusServlet extends HttpServlet {
         String role = (String) request.getSession().getAttribute("role");
         String userIdValue = request.getParameter("userId");
         String accountStatus = request.getParameter("accountStatus");
+        String targetRole = request.getParameter("targetRole");
 
         if (adminIdObj == null || !"ADMIN".equals(role)) {
             response.sendRedirect(request.getContextPath() + "/HomeServlet");
             return;
         }
 
-        if (userIdValue == null || userIdValue.trim().isEmpty() ||
-                accountStatus == null || accountStatus.trim().isEmpty()) {
-            request.getSession().setAttribute("flashError", "User ID and account status are required.");
+        if (userIdValue == null || userIdValue.trim().isEmpty()) {
+            request.getSession().setAttribute("flashError", "User ID is required.");
             response.sendRedirect(request.getContextPath() + "/AdminDashboardServlet");
             return;
         }
@@ -42,6 +42,28 @@ public class UserStatusServlet extends HttpServlet {
         try {
             int adminId = (Integer) adminIdObj;
             int userId = Integer.parseInt(userIdValue);
+
+            if (targetRole != null && !targetRole.trim().isEmpty()) {
+                targetRole = targetRole.trim().toUpperCase();
+
+                if (!"STUDENT".equals(targetRole) && !"STAFF".equals(targetRole)) {
+                    request.getSession().setAttribute("flashError", "Role must be STUDENT or STAFF.");
+                    response.sendRedirect(request.getContextPath() + "/AdminDashboardServlet");
+                    return;
+                }
+
+                userDao.changeUserRole(userId, targetRole);
+                auditDao.log(adminId, "Update User Role", "Changed user " + userId + " to " + targetRole);
+                request.getSession().setAttribute("flashMessage", "User role updated to " + targetRole + ".");
+                response.sendRedirect(request.getContextPath() + "/AdminDashboardServlet");
+                return;
+            }
+
+            if (accountStatus == null || accountStatus.trim().isEmpty()) {
+                request.getSession().setAttribute("flashError", "Account status is required.");
+                response.sendRedirect(request.getContextPath() + "/AdminDashboardServlet");
+                return;
+            }
 
             if (!"ACTIVE".equals(accountStatus) && !"SUSPENDED".equals(accountStatus)) {
                 request.getSession().setAttribute("flashError", "Account status must be ACTIVE or SUSPENDED.");
@@ -57,7 +79,8 @@ public class UserStatusServlet extends HttpServlet {
             request.getSession().setAttribute("flashError", "User ID must be a number.");
             response.sendRedirect(request.getContextPath() + "/AdminDashboardServlet");
         } catch (Exception e) {
-            throw new ServletException("Unable to update user status.", e);
+            request.getSession().setAttribute("flashError", e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/AdminDashboardServlet");
         }
     }
 }

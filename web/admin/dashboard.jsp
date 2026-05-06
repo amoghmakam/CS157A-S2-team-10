@@ -398,6 +398,22 @@
         </form>
     </div>
 
+
+    <div class="panel">
+        <h3>User Role Management</h3>
+        <p class="empty-note" style="margin-bottom: 12px;">Upgrade a student account to STAFF, or downgrade a staff account back to STUDENT. Admin accounts are protected.</p>
+        <form action="<%= request.getContextPath() %>/UserStatusServlet" method="post">
+            <div class="form-grid">
+                <input type="number" name="userId" placeholder="User ID" required>
+                <select name="targetRole">
+                    <option value="STAFF">Upgrade to STAFF</option>
+                    <option value="STUDENT">Downgrade to STUDENT</option>
+                </select>
+            </div>
+            <button type="submit">Update User Role</button>
+        </form>
+    </div>
+
     <div class="panel">
         <h3>Operational Analytics</h3>
         <p style="font-size:13px; color:#555; margin-bottom:16px;">Average wait time and event volume per service.</p>

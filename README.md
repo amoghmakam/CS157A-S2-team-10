@@ -260,7 +260,11 @@ The application keeps relationship tables synchronized during runtime actions:
 - Wrote most of Functional Requirements section as well as the Entities, Attributes, and Relationships section. 
 - Identified missing or incomplete functionality related to admin analytics, guest service viewing, category management, best-time recommendations, and system-wide activity summaries.
 - Designed and implemented a new administrator analytics feature to improve the admin dashboard’s system-wide monitoring capabilities.
-
+- Created new model classes for admin analytics data, including AdminAnalytics, ServiceAnalyticsRow, and HourlyVolumeRow.
+- Created a new AdminAnalyticsDao class to calculate system-wide analytics from the database using existing tables such as Service, Users, CheckIn, and ValidationLog.
+- Updated AdminDashboardServlet to load and pass admin analytics data to the admin dashboard while preserving existing services, audit logs, day analytics, and hour analytics.
+- Updated the admin dashboard JSP to display a new System Analytics panel showing total services, open services, total users, active check-ins, completed visits, average visit duration, flagged records, busiest services, and check-in volume by hour.
+- Reviewed the student, staff, administrator, and system requirements against the existing codebase to evaluate feature completion.
 
 ### Suparn Posina
 - Contributed to the CampusQueue concept, project planning, ERD design, and database schema for a role-based campus wait-time and crowd-tracking web application.

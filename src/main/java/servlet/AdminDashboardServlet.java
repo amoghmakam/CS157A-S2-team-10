@@ -45,6 +45,7 @@ public class AdminDashboardServlet extends HttpServlet {
             request.setAttribute("hourAnalytics", hourAnalytics);
 
             request.setAttribute("analytics", adminAnalyticsDao.getAdminAnalytics());
+            request.setAttribute("flaggedActivity", adminAnalyticsDao.getFlaggedActivity());
             request.setAttribute("allUsers", userDao.getAllUsersWithRolesAndAssignments());
 
             request.getRequestDispatcher("/admin/dashboard.jsp").forward(request, response);

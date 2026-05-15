@@ -3,6 +3,7 @@ package dao;
 import model.AdminAnalytics;
 import model.HourlyVolumeRow;
 import model.ServiceAnalyticsRow;
+import model.ValidationEntry;
 import util.DBUtil;
 
 import java.sql.Connection;
@@ -80,6 +81,42 @@ public class AdminAnalyticsDao {
         }
 
         return rows;
+    }
+
+    public List<ValidationEntry> getFlaggedActivity() throws SQLException {
+        List<ValidationEntry> entries = new ArrayList<>();
+        String sql =
+            "SELECT vl.validationID, vl.checkInID, vl.staffID, vl.validationType, vl.validationReason, vl.validationTime, " +
+            "ci.serviceName, " +
+            "CONCAT(su.firstName, ' ', su.lastName) AS studentName, " +
+            "CONCAT(su2.firstName, ' ', su2.lastName) AS staffName " +
+            "FROM ValidationLog vl " +
+            "JOIN CheckIn ci ON vl.checkInID = ci.checkInID " +
+            "JOIN Student s ON ci.studentID = s.studentID " +
+            "JOIN Users su ON s.studentID = su.userID " +
+            "JOIN Staff st ON vl.staffID = st.staffID " +
+            "JOIN Users su2 ON st.staffID = su2.userID " +
+            "WHERE UPPER(vl.validationType) = 'FLAGGED' " +
+            "ORDER BY vl.validationTime DESC";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                ValidationEntry e = new ValidationEntry();
+                e.setValidationId(rs.getInt("validationID"));
+                e.setCheckInId(rs.getInt("checkInID"));
+                e.setStaffId(rs.getInt("staffID"));
+                e.setValidationType(rs.getString("validationType"));
+                e.setValidationReason(rs.getString("validationReason"));
+                e.setValidationTime(rs.getString("validationTime"));
+                e.setServiceName(rs.getString("serviceName"));
+                e.setStudentName(rs.getString("studentName"));
+                e.setStaffName(rs.getString("staffName"));
+                entries.add(e);
+            }
+        }
+        return entries;
     }
 
     private List<HourlyVolumeRow> getHourlyVolume(Connection conn) throws SQLException {

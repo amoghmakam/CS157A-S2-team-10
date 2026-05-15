@@ -8,10 +8,12 @@
 <%@ page import="model.ServiceAnalyticsRow" %>
 <%@ page import="model.HourlyVolumeRow" %>
 <%@ page import="model.User" %>
+<%@ page import="model.ValidationEntry" %>
 <%
     // Data is prepared by AdminDashboardServlet before forwarding to this JSP.
     List<Service> services = (List<Service>) request.getAttribute("services");
     List<AuditLog> auditLogs = (List<AuditLog>) request.getAttribute("auditLogs");
+    List<ValidationEntry> flaggedActivity = (List<ValidationEntry>) request.getAttribute("flaggedActivity");
     List<String[]> categories = (List<String[]>) request.getAttribute("categories");
     List<User> allUsers = (List<User>) request.getAttribute("allUsers");
 
@@ -498,6 +500,30 @@
             <span style="background:#e0e0e0; color:#333; padding:2px 8px; border-radius:3px;">No data</span>
             <span style="background:#003366; color:white; padding:2px 8px; border-radius:3px;">Event volume</span>
         </div>
+    </div>
+
+    <div class="panel">
+        <h3>Flagged Activity</h3>
+        <% if (flaggedActivity != null && !flaggedActivity.isEmpty()) { %>
+            <table>
+                <thead><tr><th>Validation ID</th><th>Check-In ID</th><th>Service</th><th>Student</th><th>Flagged By</th><th>Reason</th><th>Time</th></tr></thead>
+                <tbody>
+                    <% for (ValidationEntry entry : flaggedActivity) { %>
+                    <tr>
+                        <td><%= entry.getValidationId() %></td>
+                        <td><%= entry.getCheckInId() %></td>
+                        <td><%= entry.getServiceName() %></td>
+                        <td><%= entry.getStudentName() %></td>
+                        <td><%= entry.getStaffName() %></td>
+                        <td><%= entry.getValidationReason() != null ? entry.getValidationReason() : "—" %></td>
+                        <td><%= entry.getValidationTime() %></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p class="empty-note">No flagged check-ins found.</p>
+        <% } %>
     </div>
 
     <div class="panel">

@@ -52,6 +52,13 @@ public class CheckInServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             request.getSession().setAttribute("flashError", "Crowd estimate must be a valid number.");
             response.sendRedirect(request.getContextPath() + "/StudentDashboardServlet");
+        } catch (java.sql.SQLException e) {
+            if (e.getMessage() != null && e.getMessage().contains("already has an active check-in")) {
+                request.getSession().setAttribute("flashError", "You already have an active check-in.");
+                response.sendRedirect(request.getContextPath() + "/StudentDashboardServlet");
+            } else {
+                throw new ServletException("Unable to process check-in.", e);
+            }
         } catch (Exception e) {
             throw new ServletException("Unable to process check-in.", e);
         }

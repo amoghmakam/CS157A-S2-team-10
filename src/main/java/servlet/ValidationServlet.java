@@ -48,6 +48,9 @@ public class ValidationServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             request.getSession().setAttribute("flashError", "Check-in ID must be a valid number.");
             response.sendRedirect(request.getContextPath() + "/StaffDashboardServlet");
+        } catch (java.sql.SQLException e) {
+            request.getSession().setAttribute("flashError", e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/StaffDashboardServlet");
         } catch (Exception e) {
             throw new ServletException("Unable to submit validation.", e);
         }

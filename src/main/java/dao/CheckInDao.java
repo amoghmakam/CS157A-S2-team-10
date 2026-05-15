@@ -123,7 +123,8 @@ public class CheckInDao {
         String sql = "SELECT c.* FROM CheckIn c " +
                      "JOIN StaffAssignment sa ON c.serviceName = sa.serviceName " +
                      "WHERE sa.staffID = ? " +
-                     "ORDER BY c.checkInTime DESC";
+                     "AND NOT EXISTS (SELECT 1 FROM ValidationLog vl WHERE vl.checkInID = c.checkInID) " +
+                     "ORDER BY c.checkInTime DESC LIMIT 50";
 
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -156,6 +157,16 @@ public class CheckInDao {
             try {
                 if (!canStaffAccessCheckIn(conn, staffId, checkInId)) {
                     throw new SQLException("Staff member is not assigned to this check-in's service.");
+                }
+
+                String dupCheck = "SELECT 1 FROM ValidationLog WHERE checkInID = ?";
+                try (PreparedStatement dupPs = conn.prepareStatement(dupCheck)) {
+                    dupPs.setInt(1, checkInId);
+                    try (ResultSet dupRs = dupPs.executeQuery()) {
+                        if (dupRs.next()) {
+                            throw new SQLException("This check-in has already been validated.");
+                        }
+                    }
                 }
 
                 int validationId;

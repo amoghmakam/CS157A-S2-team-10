@@ -18,6 +18,9 @@ mysql -u "$MYSQL_USER" -p "$MYSQL_DB" < sql/upgrade_basic_features.sql
 echo "Adding demo accounts..."
 mysql -u "$MYSQL_USER" -p "$MYSQL_DB" < sql/demo_accounts.sql
 
+echo "Adding larger sample dataset..."
+mysql -u "$MYSQL_USER" -p "$MYSQL_DB" < sql/setup_sample_data.sql
+
 echo "Running verification queries..."
 mysql -u "$MYSQL_USER" -p "$MYSQL_DB" < sql/test_basic_features.sql
 

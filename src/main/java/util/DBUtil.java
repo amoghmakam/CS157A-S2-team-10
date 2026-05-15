@@ -14,7 +14,7 @@ import java.sql.SQLException;
 public class DBUtil {
     // Uses DB_URL if set; otherwise connects to the local team10 database.
     private static final String URL =
-            System.getenv().getOrDefault("DB_URL", "jdbc:mysql://localhost:3306/team10?serverTimezone=UTC");
+            System.getenv().getOrDefault("DB_URL", "jdbc:mysql://localhost:3306/team10?serverTimezone=America/Los_Angeles");
 
     // Uses DB_USER if set; otherwise defaults to root for local class demos.
     private static final String USER =

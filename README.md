@@ -256,7 +256,11 @@ The application keeps relationship tables synchronized during runtime actions:
 ## Team Contributions
 
 ### Amogh Makam
-- 
+- Contributed to the CampusQueue project by helping review the functional requirements and identifying which features were complete, partially complete, or missing from the implementation.
+- Wrote most of Functional Requirements section as well as the Entities, Attributes, and Relationships section. 
+- Identified missing or incomplete functionality related to admin analytics, guest service viewing, category management, best-time recommendations, and system-wide activity summaries.
+- Designed and implemented a new administrator analytics feature to improve the admin dashboard’s system-wide monitoring capabilities.
+
 
 ### Suparn Posina
 - Contributed to the CampusQueue concept, project planning, ERD design, and database schema for a role-based campus wait-time and crowd-tracking web application.

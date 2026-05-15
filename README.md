@@ -259,12 +259,16 @@ The application keeps relationship tables synchronized during runtime actions:
 - 
 
 ### Suparn Posina
-- Contributed to the CampusQueue project idea, planning, and database design.
-- Created ERD diagram for overall application functionality.
-- Implemented and finalized major full-stack functionality for the CampusQueue web application.
-- Worked on Java Servlet, JSP, DAO, model, utility, SQL, and Tomcat/MySQL integration.
-- Added role-based workflows for students, staff, and administrators.
-- Added demo accounts, setup scripts, database verification scripts, documentation updates, and final deployment cleanup.
+- Contributed to the CampusQueue concept, project planning, ERD design, and database schema for a role-based campus wait-time and crowd-tracking web application.
+- Implemented and finalized major full-stack features across Java Servlets, JSP pages, DAO classes, model classes, utility classes, SQL scripts, MySQL integration, and Tomcat deployment.
+- Built and refined student workflows for viewing services, filtering by category, viewing service details, checking in/out, blocking duplicate active check-ins, and viewing check-in history.
+- Built and refined staff workflows for assigned service management, staff-only service details, service status/capacity/hour updates, check-in validation/flagging, and staff analytics.
+- Built and refined admin workflows for service management, category management, staff assignment, user moderation, user role changes, all-users overview, analytics, and audit logs.
+- Developed database-backed DAO functionality for users, services, check-ins, staff assignments, audit logs, validation logs, service categories, service hours, and analytics.
+- Added admin user management features including viewing all users with role/status/assignment data, suspending/reactivating accounts, upgrading students to staff, and downgrading staff to students.
+- Added demo accounts, additional staff test users, setup scripts, build/deploy scripts, database verification scripts, and final documentation to support a smooth grading/demo workflow.
+- Improved UI/UX styling across dashboards, tables, panels, navigation, service detail pages, and footer layout for a more polished and consistent application experience.
+- Integrated and tested the project locally with MySQL and Tomcat 10, managed Git/GitHub synchronization, cleaned up outdated paths/deployment names, and helped prepare the final submission for demo readiness.
 
 ### Andrea Tapia-Sandoval
 - Built and styled the homepage and initial project structure, including login

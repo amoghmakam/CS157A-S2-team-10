@@ -62,7 +62,6 @@ CS157A-S2-team-10/
 ├── DEMO.md                         # Information to demo project
 ├── RUN_AND_TEST.md                 # Detailed local run/test guide
 ├── IMPLEMENTATION_NOTES.md         # Explanation of important implementation choices
-├── CHECKLIST.md                    # Final requirement checklist for demo/submission
 ├── scripts/
 │   ├── setup_db_mac.sh             # Rebuilds DB, applies upgrades, seeds demo accounts, runs tests
 │   └── build_deploy_mac.sh         # Compiles Java and deploys to Tomcat 10

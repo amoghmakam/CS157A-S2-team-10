@@ -69,6 +69,7 @@ CS157A-S2-team-10/
 │   ├── schema.sql                  # Main schema, relationship tables, and sample data
 │   ├── upgrade_basic_features.sql  # Account-status column and helpful indexes
 │   ├── demo_accounts.sql           # Easy demo accounts for student/staff/admin
+│   ├── setup_sample_data.sql       # Adds large dataset for testing
 │   └── test_basic_features.sql     # SQL verification queries
 ├── src/main/java/
 │   ├── dao/                        # JDBC data access classes
